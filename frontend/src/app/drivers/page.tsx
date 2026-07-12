@@ -149,7 +149,15 @@ export default function DriversPage() {
         isOpen={isFormOpen}
         onClose={() => setIsFormOpen(false)}
         onSubmit={handleFormSubmit}
-        initialValues={editingDriver}
+        initialValues={editingDriver ? {
+          name: editingDriver.name,
+          license_number: editingDriver.license_number,
+          license_category: editingDriver.license_category,
+          license_expiry: editingDriver.license_expiry,
+          contact_number: editingDriver.contact_number || '',
+          safety_score: editingDriver.safety_score,
+          status: editingDriver.status,
+        } : undefined}
       />
     </div>
   );

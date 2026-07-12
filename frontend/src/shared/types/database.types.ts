@@ -86,7 +86,12 @@ export interface Database {
 
 export type Profile = Database["public"]["Tables"]["profiles"]["Row"];
 export type Vehicle = Database["public"]["Tables"]["vehicles"]["Row"];
-export type Driver = Database["public"]["Tables"]["drivers"]["Row"];
+export type Driver = Database["public"]["Tables"]["drivers"]["Row"] & {
+  license_category: string;
+  contact_number?: string | null;
+  safety_score: number;
+  updated_at: string;
+};
 export type Trip = Database["public"]["Tables"]["trips"]["Row"];
 export type MaintenanceLog = Database["public"]["Tables"]["maintenance_logs"]["Row"];
 export type FuelLog = Database["public"]["Tables"]["fuel_logs"]["Row"];

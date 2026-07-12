@@ -19,7 +19,7 @@ type FormValues = z.infer<typeof formSchema>;
 interface TripFormProps {
   onSuccess: () => void;
   onCancel: () => void;
-  onSubmitTrip: (data: FormValues) => Promise<any>;
+  onSubmitTrip: (data: FormValues) => Promise<void>;
   isSubmitting: boolean;
 }
 
@@ -67,8 +67,8 @@ export const TripForm: React.FC<TripFormProps> = ({
         const data = await tripApi.getEligibility();
         setVehicles(data.vehicles);
         setDrivers(data.drivers);
-      } catch (err: any) {
-        setEligibilityError(err.message || 'Failed to load eligible vehicles and drivers');
+      } catch (err) {
+        setEligibilityError(err instanceof Error ? err.message : 'Failed to load eligible vehicles and drivers');
       } finally {
         setEligibilityLoading(false);
       }
@@ -80,7 +80,7 @@ export const TripForm: React.FC<TripFormProps> = ({
     try {
       await onSubmitTrip(values);
       onSuccess();
-    } catch (err) {
+    } catch {
       // Error handled by hook toasts
     }
   };

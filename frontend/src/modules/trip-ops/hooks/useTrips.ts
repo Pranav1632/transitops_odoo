@@ -27,7 +27,7 @@ export const useTrips = (initialStatus?: string) => {
     try {
       const data = await tripApi.getKPIs();
       setKpis(data);
-    } catch (err: any) {
+    } catch (err) {
       console.error('Failed to fetch trip KPIs:', err);
     } finally {
       setKpiLoading(false);
@@ -52,8 +52,8 @@ export const useTrips = (initialStatus?: string) => {
       setTrips(data.trips);
       setTotalPages(data.pagination.totalPages);
       setTotalItems(data.pagination.totalItems);
-    } catch (err: any) {
-      const errMsg = err.response?.data?.message || err.message || 'Failed to fetch trips';
+    } catch (err) {
+      const errMsg = err instanceof Error ? err.message : 'Failed to fetch trips';
       setError(errMsg);
       toast.error(errMsg);
     } finally {
@@ -63,12 +63,13 @@ export const useTrips = (initialStatus?: string) => {
 
   // Initial and reactive fetch
   useEffect(() => {
+    let mounted = true;
     fetchTrips();
-  }, [fetchTrips]);
-
-  useEffect(() => {
-    fetchKPIs();
-  }, [fetchKPIs]);
+    if (mounted) {
+      fetchKPIs();
+    }
+    return () => { mounted = false; };
+  }, [fetchTrips, fetchKPIs]);
 
   // Socket.io subscription for real-time live updates
   useEffect(() => {
@@ -135,8 +136,8 @@ export const useTrips = (initialStatus?: string) => {
       fetchTrips();
       fetchKPIs();
       return newTrip;
-    } catch (err: any) {
-      const errMsg = err.response?.data?.message || err.message || 'Failed to create trip';
+    } catch (err) {
+      const errMsg = err instanceof Error ? err.message : 'Failed to create trip';
       toast.error(errMsg);
       throw err;
     } finally {
@@ -152,8 +153,8 @@ export const useTrips = (initialStatus?: string) => {
       fetchTrips();
       fetchKPIs();
       return updated;
-    } catch (err: any) {
-      const errMsg = err.response?.data?.message || err.message || 'Failed to dispatch trip';
+    } catch (err) {
+      const errMsg = err instanceof Error ? err.message : 'Failed to dispatch trip';
       toast.error(errMsg);
       throw err;
     } finally {
@@ -169,8 +170,8 @@ export const useTrips = (initialStatus?: string) => {
       fetchTrips();
       fetchKPIs();
       return updated;
-    } catch (err: any) {
-      const errMsg = err.response?.data?.message || err.message || 'Failed to complete trip';
+    } catch (err) {
+      const errMsg = err instanceof Error ? err.message : 'Failed to complete trip';
       toast.error(errMsg);
       throw err;
     } finally {
@@ -186,8 +187,8 @@ export const useTrips = (initialStatus?: string) => {
       fetchTrips();
       fetchKPIs();
       return updated;
-    } catch (err: any) {
-      const errMsg = err.response?.data?.message || err.message || 'Failed to cancel trip';
+    } catch (err) {
+      const errMsg = err instanceof Error ? err.message : 'Failed to cancel trip';
       toast.error(errMsg);
       throw err;
     } finally {

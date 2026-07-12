@@ -15,8 +15,8 @@ export const LiveBoard: React.FC = () => {
       try {
         const response = await tripApi.getTrips({ status: 'Dispatched', limit: 50 });
         setActiveTrips(response.trips);
-      } catch (err: any) {
-        setError(err.message || 'Failed to load active dispatch board');
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Failed to load active dispatch board');
       } finally {
         setLoading(false);
       }

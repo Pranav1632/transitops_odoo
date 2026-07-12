@@ -24,7 +24,9 @@ export default function RevenueChart({ data = [] }: RevenueChartProps) {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    setMounted(true);
+    let isMounted = true;
+    if (isMounted) setMounted(true);
+    return () => { isMounted = false; };
   }, []);
 
   if (!mounted) {
@@ -61,7 +63,7 @@ export default function RevenueChart({ data = [] }: RevenueChartProps) {
               color: "#fff",
               fontSize: "12px"
             }}
-            formatter={(value: any) => [`₹${Number(value).toLocaleString()}`, ""]}
+            formatter={(value: number) => [`₹${Number(value).toLocaleString()}`, ""]}
           />
           <Legend 
             verticalAlign="top" 

@@ -1,7 +1,6 @@
 'use client';
 
 import { useSession } from '../../../shared/hooks/useSession';
-import { supabase } from '../../../shared/lib/apiClient';
 import { logoutApi } from '../api/fleetApi';
 import { useRouter } from 'next/navigation';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
@@ -20,9 +19,11 @@ export default function SettingsForm() {
       // Invalidate on backend
       await logoutApi();
       
-      // Sign out of local Supabase
-      const { error } = await supabase.auth.signOut();
-      if (error) throw error;
+      // Clear local auth tokens
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem('sb-token');
+        localStorage.removeItem('sb-profile');
+      }
 
       toast.success('Logged out successfully');
       router.push('/login');

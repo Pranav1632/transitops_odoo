@@ -11,6 +11,22 @@ import {
 } from "@/shared/types/database.types";
 import { toast } from "sonner";
 
+// Define proper type for reports data
+interface ReportsData {
+  totalRevenue: number;
+  totalExpenses: number;
+  totalFuelCost: number;
+  totalMaintenanceCost: number;
+  profitMargin: number;
+  vehiclesCount: number;
+  tripsCount: number;
+  avgTripDistance: number;
+  avgFuelEfficiency: number;
+  topVehicles: Array<{ name: string; cost: number }>;
+  monthlyRevenue: Array<{ month: string; Revenue: number; Expenses: number }>;
+  monthlyExpenses: Array<{ month: string; cost: number }>;
+}
+
 export function useReports() {
   const [vehicles, setVehicles] = useState<Vehicle[]>([]);
   const [trips, setTrips] = useState<Trip[]>([]);
@@ -19,7 +35,7 @@ export function useReports() {
   const [expenses, setExpenses] = useState<Expense[]>([]);
   
   // Analytics state
-  const [reportsData, setReportsData] = useState<any>(null);
+  const [reportsData, setReportsData] = useState<ReportsData | null>(null);
 
   // Loadings
   const [loadingVehicles, setLoadingVehicles] = useState(false);
@@ -37,7 +53,7 @@ export function useReports() {
       ]);
       setVehicles(vList);
       setTrips(tList);
-    } catch (err: any) {
+    } catch (err) {
       toast.error("Failed to load vehicle data");
     } finally {
       setLoadingVehicles(false);
@@ -49,7 +65,7 @@ export function useReports() {
     try {
       const data = await financeApi.getMaintenanceLogs();
       setMaintenanceLogs(data);
-    } catch (err: any) {
+    } catch (err) {
       toast.error("Failed to load maintenance records");
     } finally {
       setLoadingMaintenance(false);
@@ -61,7 +77,7 @@ export function useReports() {
     try {
       const data = await financeApi.getFuelLogs();
       setFuelLogs(data);
-    } catch (err: any) {
+    } catch (err) {
       toast.error("Failed to load fuel logs");
     } finally {
       setLoadingFuel(false);
@@ -73,7 +89,7 @@ export function useReports() {
     try {
       const data = await financeApi.getExpenses();
       setExpenses(data);
-    } catch (err: any) {
+    } catch (err) {
       toast.error("Failed to load expense records");
     } finally {
       setLoadingExpenses(false);
@@ -85,7 +101,7 @@ export function useReports() {
     try {
       const data = await financeApi.getReports();
       setReportsData(data);
-    } catch (err: any) {
+    } catch (err) {
       toast.error("Failed to compile financial aggregates");
     } finally {
       setLoadingReports(false);
@@ -101,7 +117,7 @@ export function useReports() {
       // Refresh vehicles (to get In Shop status update) and reports
       fetchVehiclesAndTrips();
       fetchReports();
-    } catch (err: any) {
+    } catch (err) {
       toast.error("Failed to create maintenance log");
     }
   };
@@ -116,7 +132,7 @@ export function useReports() {
       // Refresh vehicles (to restore Available status) and reports
       fetchVehiclesAndTrips();
       fetchReports();
-    } catch (err: any) {
+    } catch (err) {
       toast.error("Failed to close maintenance log");
     }
   };
@@ -127,7 +143,7 @@ export function useReports() {
       setFuelLogs((prev) => [newLog, ...prev]);
       toast.success("Fuel transaction logged successfully");
       fetchReports();
-    } catch (err: any) {
+    } catch (err) {
       toast.error("Failed to save fuel log");
     }
   };
@@ -138,18 +154,22 @@ export function useReports() {
       setExpenses((prev) => [newExpense, ...prev]);
       toast.success("Expense logged successfully");
       fetchReports();
-    } catch (err: any) {
+    } catch (err) {
       toast.error("Failed to save expense log");
     }
   };
 
   // Initial fetches
   useEffect(() => {
-    fetchVehiclesAndTrips();
-    fetchMaintenance();
-    fetchFuelLogs();
-    fetchExpenses();
-    fetchReports();
+    let mounted = true;
+    if (mounted) {
+      fetchVehiclesAndTrips();
+      fetchMaintenance();
+      fetchFuelLogs();
+      fetchExpenses();
+      fetchReports();
+    }
+    return () => { mounted = false; };
   }, [fetchVehiclesAndTrips, fetchMaintenance, fetchFuelLogs, fetchExpenses, fetchReports]);
 
   return {

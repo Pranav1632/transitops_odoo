@@ -1,4 +1,4 @@
-import { apiClient } from '../../../shared/lib/apiClient';
+import apiClient from '../../../shared/lib/apiClient';
 
 export interface EligibleVehicle {
   id: string;

@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { toast } from 'sonner';
+import { Driver, CreateDriverInput, UpdateDriverInput } from '@/shared/types/database.types';
 import {
   getDriversApi,
   createDriverApi,
@@ -8,7 +9,7 @@ import {
 } from '../api/fleetApi';
 
 export function useDrivers() {
-  const [drivers, setDrivers] = useState<any[]>([]);
+  const [drivers, setDrivers] = useState<Driver[]>([]);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
   const [limit] = useState(10);
@@ -31,41 +32,45 @@ export function useDrivers() {
       setDrivers(result.data);
       setTotalPages(result.pagination.pages);
       setTotalItems(result.pagination.total);
-    } catch (err: any) {
+    } catch (err) {
       console.error(err);
-      toast.error(err.response?.data?.error || 'Failed to fetch drivers');
+      toast.error(err instanceof Error ? err.message : 'Failed to fetch drivers');
     } finally {
       setLoading(false);
     }
   }, [page, limit, status, search]);
 
   useEffect(() => {
-    fetchDrivers();
+    let mounted = true;
+    if (mounted) {
+      fetchDrivers();
+    }
+    return () => { mounted = false; };
   }, [fetchDrivers]);
 
-  const addDriver = async (data: any) => {
+  const addDriver = async (data: CreateDriverInput) => {
     try {
       const newDriver = await createDriverApi(data);
       toast.success('Driver added successfully');
       fetchDrivers();
       return newDriver;
-    } catch (err: any) {
+    } catch (err) {
       console.error(err);
-      const errMsg = err.response?.data?.error || 'Failed to add driver';
+      const errMsg = err instanceof Error ? err.message : 'Failed to add driver';
       toast.error(errMsg);
       throw err;
     }
   };
 
-  const editDriver = async (id: string, data: any) => {
+  const editDriver = async (id: string, data: UpdateDriverInput) => {
     try {
       const updatedDriver = await updateDriverApi(id, data);
       toast.success('Driver updated successfully');
       fetchDrivers();
       return updatedDriver;
-    } catch (err: any) {
+    } catch (err) {
       console.error(err);
-      const errMsg = err.response?.data?.error || 'Failed to update driver';
+      const errMsg = err instanceof Error ? err.message : 'Failed to update driver';
       toast.error(errMsg);
       throw err;
     }
@@ -76,9 +81,9 @@ export function useDrivers() {
       await deleteDriverApi(id);
       toast.success('Driver deleted successfully');
       fetchDrivers();
-    } catch (err: any) {
+    } catch (err) {
       console.error(err);
-      const errMsg = err.response?.data?.error || 'Failed to delete driver';
+      const errMsg = err instanceof Error ? err.message : 'Failed to delete driver';
       toast.error(errMsg);
       throw err;
     }

@@ -30,8 +30,14 @@ export default function TopVehiclesBar({ data = [] }: TopVehiclesBarProps) {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    setMounted(true);
+    let isMounted = true;
+    if (isMounted) setMounted(true);
+    return () => { isMounted = false; };
   }, []);
+
+  if (!mounted) {
+    return <div className="h-80 w-full bg-zinc-50 dark:bg-zinc-950 rounded-xl animate-pulse" />;
+  }
 
   if (!mounted) {
     return <div className="h-80 w-full bg-zinc-50 dark:bg-zinc-950 rounded-xl animate-pulse" />;
@@ -70,7 +76,7 @@ export default function TopVehiclesBar({ data = [] }: TopVehiclesBarProps) {
               color: "#fff",
               fontSize: "12px"
             }}
-            formatter={(value: any) => [`₹${Number(value).toLocaleString()}`, "Total Expense"]}
+            formatter={(value: number) => [`₹${Number(value).toLocaleString()}`, "Total Expense"]}
           />
           <Bar 
             dataKey="cost" 

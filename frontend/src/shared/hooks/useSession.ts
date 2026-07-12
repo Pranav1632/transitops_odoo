@@ -15,27 +15,41 @@ export function useSession() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
-    const token = typeof window !== 'undefined' ? localStorage.getItem('sb-token') : null;
-    const profileStr = typeof window !== 'undefined' ? localStorage.getItem('sb-profile') : null;
+    let mounted = true;
+    
+    const initSession = async () => {
+      const token = typeof window !== 'undefined' ? localStorage.getItem('sb-token') : null;
+      const profileStr = typeof window !== 'undefined' ? localStorage.getItem('sb-profile') : null;
 
-    if (token && profileStr) {
-      try {
-        const profile = JSON.parse(profileStr);
-        setUser({
-          id: profile.id || '',
-          email: profile.email || '',
-          role: profile.role || '',
-          name: profile.fullName || '',
-        });
-        setIsAuthenticated(true);
-      } catch (e) {
-        if (typeof window !== 'undefined') {
-          localStorage.removeItem('sb-token');
-          localStorage.removeItem('sb-profile');
+      if (token && profileStr) {
+        try {
+          const profile = JSON.parse(profileStr);
+          if (mounted) {
+            setUser({
+              id: profile.id || '',
+              email: profile.email || '',
+              role: profile.role || '',
+              name: profile.fullName || '',
+            });
+            setIsAuthenticated(true);
+          }
+        } catch (e) {
+          if (typeof window !== 'undefined') {
+            localStorage.removeItem('sb-token');
+            localStorage.removeItem('sb-profile');
+          }
         }
       }
-    }
-    setLoading(false);
+      if (mounted) {
+        setLoading(false);
+      }
+    };
+
+    initSession();
+
+    return () => {
+      mounted = false;
+    };
   }, []);
 
   return {

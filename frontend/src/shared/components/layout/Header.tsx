@@ -23,19 +23,20 @@ export default function Header() {
 
   const [darkMode, setDarkMode] = useState(false);
 
-  useEffect(() => {
-    // Check local storage or system preference
-    const isDark = document.documentElement.classList.contains("dark");
+  const isDark = typeof window !== 'undefined' && document.documentElement.classList.contains("dark");
+  if (darkMode !== isDark) {
     setDarkMode(isDark);
-  }, []);
+  }
 
   const toggleDarkMode = () => {
     const nextDark = !darkMode;
     setDarkMode(nextDark);
-    if (nextDark) {
-      document.documentElement.classList.add("dark");
-    } else {
-      document.documentElement.classList.remove("dark");
+    if (typeof window !== 'undefined') {
+      if (nextDark) {
+        document.documentElement.classList.add("dark");
+      } else {
+        document.documentElement.classList.remove("dark");
+      }
     }
   };
 

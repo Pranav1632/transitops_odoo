@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { toast } from 'sonner';
+import { Vehicle, CreateVehicleInput, UpdateVehicleInput } from '@/shared/types/database.types';
 import {
   getVehiclesApi,
   createVehicleApi,
@@ -8,7 +9,7 @@ import {
 } from '../api/fleetApi';
 
 export function useVehicles() {
-  const [vehicles, setVehicles] = useState<any[]>([]);
+  const [vehicles, setVehicles] = useState<Vehicle[]>([]);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
   const [limit] = useState(10);
@@ -33,41 +34,45 @@ export function useVehicles() {
       setVehicles(result.data);
       setTotalPages(result.pagination.pages);
       setTotalItems(result.pagination.total);
-    } catch (err: any) {
+    } catch (err) {
       console.error(err);
-      toast.error(err.response?.data?.error || 'Failed to fetch vehicles');
+      toast.error(err instanceof Error ? err.message : 'Failed to fetch vehicles');
     } finally {
       setLoading(false);
     }
   }, [page, limit, status, search, region]);
 
   useEffect(() => {
-    fetchVehicles();
+    let mounted = true;
+    if (mounted) {
+      fetchVehicles();
+    }
+    return () => { mounted = false; };
   }, [fetchVehicles]);
 
-  const addVehicle = async (data: any) => {
+  const addVehicle = async (data: CreateVehicleInput) => {
     try {
       const newVehicle = await createVehicleApi(data);
       toast.success('Vehicle added successfully');
       fetchVehicles();
       return newVehicle;
-    } catch (err: any) {
+    } catch (err) {
       console.error(err);
-      const errMsg = err.response?.data?.error || 'Failed to add vehicle';
+      const errMsg = err instanceof Error ? err.message : 'Failed to add vehicle';
       toast.error(errMsg);
       throw err;
     }
   };
 
-  const editVehicle = async (id: string, data: any) => {
+  const editVehicle = async (id: string, data: UpdateVehicleInput) => {
     try {
       const updatedVehicle = await updateVehicleApi(id, data);
       toast.success('Vehicle updated successfully');
       fetchVehicles();
       return updatedVehicle;
-    } catch (err: any) {
+    } catch (err) {
       console.error(err);
-      const errMsg = err.response?.data?.error || 'Failed to update vehicle';
+      const errMsg = err instanceof Error ? err.message : 'Failed to update vehicle';
       toast.error(errMsg);
       throw err;
     }
@@ -78,9 +83,9 @@ export function useVehicles() {
       await deleteVehicleApi(id);
       toast.success('Vehicle deleted successfully');
       fetchVehicles();
-    } catch (err: any) {
+    } catch (err) {
       console.error(err);
-      const errMsg = err.response?.data?.error || 'Failed to delete vehicle';
+      const errMsg = err instanceof Error ? err.message : 'Failed to delete vehicle';
       toast.error(errMsg);
       throw err;
     }

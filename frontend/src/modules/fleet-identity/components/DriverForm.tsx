@@ -28,8 +28,8 @@ const driverSchema = z.object({
 interface DriverFormProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (data: any) => Promise<any>;
-  initialValues?: any;
+  onSubmit: (data: z.infer<typeof driverSchema>) => Promise<void>;
+  initialValues?: z.infer<typeof driverSchema>;
 }
 
 export default function DriverForm({ isOpen, onClose, onSubmit, initialValues }: DriverFormProps) {

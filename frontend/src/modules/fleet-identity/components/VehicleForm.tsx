@@ -29,8 +29,8 @@ const vehicleSchema = z.object({
 interface VehicleFormProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (data: any) => Promise<any>;
-  initialValues?: any;
+  onSubmit: (data: z.infer<typeof vehicleSchema>) => Promise<void>;
+  initialValues?: z.infer<typeof vehicleSchema>;
 }
 
 export default function VehicleForm({ isOpen, onClose, onSubmit, initialValues }: VehicleFormProps) {

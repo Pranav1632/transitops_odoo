@@ -4,9 +4,9 @@ import { Trip, CompleteTripInput } from '../api/tripApi';
 
 interface TripLifecycleStepperProps {
   trip: Trip;
-  onDispatch: (id: string) => Promise<any>;
-  onComplete: (id: string, data: CompleteTripInput) => Promise<any>;
-  onCancel: (id: string) => Promise<any>;
+  onDispatch: (id: string) => Promise<void>;
+  onComplete: (id: string, data: CompleteTripInput) => Promise<void>;
+  onCancel: (id: string) => Promise<void>;
   isMutating: boolean;
 }
 
@@ -36,7 +36,7 @@ export const TripLifecycleStepper: React.FC<TripLifecycleStepperProps> = ({
   const handleDispatch = async () => {
     try {
       await onDispatch(trip.id);
-    } catch (error) {
+    } catch {
       // toast shown in hook
     }
   };
@@ -45,7 +45,7 @@ export const TripLifecycleStepper: React.FC<TripLifecycleStepperProps> = ({
     if (window.confirm('Are you sure you want to cancel this trip?')) {
       try {
         await onCancel(trip.id);
-      } catch (error) {
+      } catch {
         // toast shown in hook
       }
     }
@@ -82,7 +82,7 @@ export const TripLifecycleStepper: React.FC<TripLifecycleStepperProps> = ({
       setActualDistance('');
       setFuelConsumed('');
       setRevenue('');
-    } catch (error) {
+    } catch {
       // toast shown in hook
     }
   };

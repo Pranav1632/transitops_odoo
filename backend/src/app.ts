@@ -1,5 +1,7 @@
 import express from 'express';
 import cors from 'cors';
+import fs from 'fs';
+import path from 'path';
 import { rateLimiter } from './shared/middleware/rateLimiter';
 import { compressionMiddleware } from './shared/middleware/compression';
 import { errorHandler } from './shared/middleware/errorHandler';
@@ -8,6 +10,15 @@ import tripsRouter from './modules/trip-ops/routes';
 import financeRouter from './modules/maintenance-finance/routes';
 
 const app = express();
+
+// Request logging middleware
+app.use((req, res, next) => {
+  const logMsg = `[${new Date().toISOString()}] ${req.method} ${req.url}\n`;
+  try {
+    fs.appendFileSync(path.join(__dirname, 'backend_requests.log'), logMsg);
+  } catch (e) {}
+  next();
+});
 
 // Middleware
 app.use(cors({
@@ -24,6 +35,15 @@ app.use('/api/v1/trips', tripsRouter);
 app.use('/api/v1/finance', financeRouter);
 
 // Global Error Handler
-app.use(errorHandler);
+app.use((err: any, req: any, res: any, next: any) => {
+  const errLog = `[${new Date().toISOString()}] ERROR: ${err.message}\nStack: ${err.stack}\n`;
+  try {
+    fs.appendFileSync(path.join(__dirname, 'backend_requests.log'), errLog);
+  } catch (e) {}
+  errorHandler(err, req, res, next);
+});
+
+
 
 export default app;
+

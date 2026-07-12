@@ -1,0 +1,47 @@
+# Dependencies
+node_modules/
+**/node_modules/
+
+# Environment files
+.env
+.env.*
+!.env.example
+!.env.sample
+
+# Next.js
+.next/
+out/
+.vercel/
+*.tsbuildinfo
+
+# Express / build output
+dist/
+build/
+coverage/
+.nyc_output/
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Supabase
+.supabase/
+supabase/.temp/
+supabase/.branches/
+supabase/*.log
+
+# OS and editor files
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+.idea/
+.vscode/
+
+# Temporary files
+tmp/
+temp/
+.cache/
+MASTER.md

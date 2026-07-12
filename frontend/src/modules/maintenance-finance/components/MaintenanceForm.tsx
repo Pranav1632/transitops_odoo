@@ -4,7 +4,9 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { Vehicle, MaintenanceLog } from "@/shared/types/database.types";
-import { X } from "lucide-react";
+import { X, Loader2 } from "lucide-react";
+import { useEffect } from "react";
+import { Button } from "@/components/ui/button";
 
 const maintenanceSchema = z.object({
   vehicle_id: z.string().min(1, "Vehicle selection is required"),
@@ -23,8 +25,6 @@ const maintenanceSchema = z.object({
   path: ["end_date"],
 });
 
-type MaintenanceFormValues = z.infer<typeof maintenanceSchema>;
-
 interface MaintenanceFormProps {
   vehicles: Vehicle[];
   onSubmit: (data: Omit<MaintenanceLog, "id" | "created_at">) => void;
@@ -36,19 +36,23 @@ export default function MaintenanceForm({ vehicles, onSubmit, onClose }: Mainten
     register,
     handleSubmit,
     watch,
+    reset,
     formState: { errors, isSubmitting },
-  } = useForm<MaintenanceFormValues>({
+  } = useForm({
     resolver: zodResolver(maintenanceSchema),
     defaultValues: {
-      status: "Active",
-      start_date: new Date().toISOString().split("T")[0],
+      vehicle_id: "",
+      description: "",
       cost: 0,
+      status: "Active" as const,
+      start_date: new Date().toISOString().split("T")[0],
+      end_date: "",
     },
   });
 
   const selectedStatus = watch("status");
 
-  const onFormSubmit = (data: MaintenanceFormValues) => {
+  const onFormSubmit = (data: z.infer<typeof maintenanceSchema>) => {
     onSubmit({
       vehicle_id: data.vehicle_id,
       description: data.description,
@@ -60,12 +64,12 @@ export default function MaintenanceForm({ vehicles, onSubmit, onClose }: Mainten
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-zinc-950/60 backdrop-blur-sm flex items-center justify-center p-4">
-      <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl w-full max-w-lg shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+    <div className="fixed inset-0 z-50 bg-black/85 backdrop-blur-sm flex items-center justify-center p-4">
+      <div className="bg-zinc-900 border border-zinc-800 rounded-2xl w-full max-w-lg shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-200">
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-zinc-100 dark:border-zinc-800">
-          <h3 className="font-bold text-lg text-zinc-950 dark:text-zinc-50">Log Service Record</h3>
-          <button onClick={onClose} className="p-1.5 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-400 dark:text-zinc-500 hover:text-zinc-950 dark:hover:text-white transition-colors">
+        <div className="flex items-center justify-between p-6 border-b border-zinc-800">
+          <h3 className="font-bold text-lg text-white">Log Service Record</h3>
+          <button onClick={onClose} className="p-1.5 rounded-lg hover:bg-zinc-800 text-zinc-500 hover:text-white transition-colors cursor-pointer">
             <X className="w-5 h-5" />
           </button>
         </div>
@@ -73,13 +77,13 @@ export default function MaintenanceForm({ vehicles, onSubmit, onClose }: Mainten
         {/* Body Form */}
         <form onSubmit={handleSubmit(onFormSubmit)} className="p-6 space-y-4">
           {/* Vehicle Dropdown */}
-          <div>
-            <label className="block text-xs font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider mb-1.5">
+          <div className="space-y-1.5">
+            <label className="block text-xs font-semibold text-zinc-400 uppercase tracking-wider">
               Select Vehicle
             </label>
             <select
               {...register("vehicle_id")}
-              className="w-full text-sm px-4 py-2.5 border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500/20 text-zinc-900 dark:text-zinc-100"
+              className="h-10 w-full rounded-md border border-zinc-800 bg-zinc-950 px-3 py-1.5 text-sm text-white focus:outline-none focus:ring-2 focus:ring-zinc-700 disabled:pointer-events-none disabled:opacity-50"
             >
               <option value="">-- Choose a vehicle --</option>
               {vehicles
@@ -91,29 +95,29 @@ export default function MaintenanceForm({ vehicles, onSubmit, onClose }: Mainten
                 ))}
             </select>
             {errors.vehicle_id && (
-              <p className="text-xs text-red-500 mt-1 font-medium">{errors.vehicle_id.message}</p>
+              <p className="text-xs text-red-500 font-medium">{errors.vehicle_id.message}</p>
             )}
           </div>
 
           {/* Description */}
-          <div>
-            <label className="block text-xs font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider mb-1.5">
+          <div className="space-y-1.5">
+            <label className="block text-xs font-semibold text-zinc-400 uppercase tracking-wider">
               Service Description
             </label>
             <input
               type="text"
               placeholder="e.g. Scheduled Engine Tuning, Oil Change"
               {...register("description")}
-              className="w-full text-sm px-4 py-2.5 border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500/20 text-zinc-900 dark:text-zinc-100"
+              className="w-full text-sm px-3 py-2 bg-zinc-950 border border-zinc-800 rounded-md focus:outline-none focus:ring-1 focus:ring-zinc-700 text-white placeholder-zinc-500 transition-all"
             />
             {errors.description && (
-              <p className="text-xs text-red-500 mt-1 font-medium">{errors.description.message}</p>
+              <p className="text-xs text-red-500 font-medium">{errors.description.message}</p>
             )}
           </div>
 
           {/* Cost */}
-          <div>
-            <label className="block text-xs font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider mb-1.5">
+          <div className="space-y-1.5">
+            <label className="block text-xs font-semibold text-zinc-400 uppercase tracking-wider">
               Total Cost (INR)
             </label>
             <input
@@ -121,36 +125,36 @@ export default function MaintenanceForm({ vehicles, onSubmit, onClose }: Mainten
               step="0.01"
               placeholder="0.00"
               {...register("cost")}
-              className="w-full text-sm px-4 py-2.5 border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500/20 text-zinc-900 dark:text-zinc-100"
+              className="w-full text-sm px-3 py-2 bg-zinc-950 border border-zinc-800 rounded-md focus:outline-none focus:ring-1 focus:ring-zinc-700 text-white placeholder-zinc-500 transition-all"
             />
             {errors.cost && (
-              <p className="text-xs text-red-500 mt-1 font-medium">{errors.cost.message}</p>
+              <p className="text-xs text-red-500 font-medium">{errors.cost.message}</p>
             )}
           </div>
 
           {/* Grid: Dates & Status */}
           <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-xs font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider mb-1.5">
+            <div className="space-y-1.5">
+              <label className="block text-xs font-semibold text-zinc-400 uppercase tracking-wider">
                 Start Date
               </label>
               <input
                 type="date"
                 {...register("start_date")}
-                className="w-full text-sm px-4 py-2.5 border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500/20 text-zinc-900 dark:text-zinc-100"
+                className="w-full text-sm px-3 py-2 bg-zinc-950 border border-zinc-800 rounded-md focus:outline-none focus:ring-1 focus:ring-zinc-700 text-white transition-all"
               />
               {errors.start_date && (
-                <p className="text-xs text-red-500 mt-1 font-medium">{errors.start_date.message}</p>
+                <p className="text-xs text-red-500 font-medium">{errors.start_date.message}</p>
               )}
             </div>
 
-            <div>
-              <label className="block text-xs font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider mb-1.5">
+            <div className="space-y-1.5">
+              <label className="block text-xs font-semibold text-zinc-400 uppercase tracking-wider">
                 Service Status
               </label>
               <select
                 {...register("status")}
-                className="w-full text-sm px-4 py-2.5 border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500/20 text-zinc-900 dark:text-zinc-100"
+                className="h-10 w-full rounded-md border border-zinc-800 bg-zinc-950 px-3 py-1.5 text-sm text-white focus:outline-none focus:ring-2 focus:ring-zinc-700"
               >
                 <option value="Active">Active (In Shop)</option>
                 <option value="Closed">Closed (Completed)</option>
@@ -160,37 +164,38 @@ export default function MaintenanceForm({ vehicles, onSubmit, onClose }: Mainten
 
           {/* End Date (Conditional) */}
           {selectedStatus === "Closed" && (
-            <div className="animate-in slide-in-from-top-2 duration-200">
-              <label className="block text-xs font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider mb-1.5">
+            <div className="space-y-1.5 animate-in slide-in-from-top-2 duration-200">
+              <label className="block text-xs font-semibold text-zinc-400 uppercase tracking-wider">
                 End Date
               </label>
               <input
                 type="date"
                 {...register("end_date")}
-                className="w-full text-sm px-4 py-2.5 border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500/20 text-zinc-900 dark:text-zinc-100"
+                className="w-full text-sm px-3 py-2 bg-zinc-950 border border-zinc-800 rounded-md focus:outline-none focus:ring-1 focus:ring-zinc-700 text-white transition-all"
               />
               {errors.end_date && (
-                <p className="text-xs text-red-500 mt-1 font-medium">{errors.end_date.message}</p>
+                <p className="text-xs text-red-500 font-medium">{errors.end_date.message}</p>
               )}
             </div>
           )}
 
           {/* Actions */}
-          <div className="flex gap-3 justify-end pt-4 border-t border-zinc-100 dark:border-zinc-800">
-            <button
+          <div className="flex gap-3 justify-end pt-4 border-t border-zinc-800">
+            <Button
               type="button"
+              variant="outline"
               onClick={onClose}
-              className="px-4 py-2 text-sm font-semibold border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-900 rounded-xl transition-colors"
+              className="bg-zinc-900 border-zinc-800 text-zinc-400 hover:bg-zinc-800 hover:text-white"
             >
               Cancel
-            </button>
-            <button
+            </Button>
+            <Button
               type="submit"
               disabled={isSubmitting}
-              className="px-5 py-2 text-sm font-semibold bg-emerald-500 text-zinc-950 hover:bg-emerald-600 rounded-xl transition-colors disabled:opacity-50"
+              className="bg-white text-black hover:bg-zinc-200"
             >
               {isSubmitting ? "Saving..." : "Log Service"}
-            </button>
+            </Button>
           </div>
         </form>
       </div>

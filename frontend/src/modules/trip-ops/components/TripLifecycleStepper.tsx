@@ -88,20 +88,20 @@ export const TripLifecycleStepper: React.FC<TripLifecycleStepperProps> = ({
   };
 
   return (
-    <div className="flex flex-col space-y-4 p-4 bg-neutral-950/40 border border-neutral-900 rounded-lg">
+    <div className="flex flex-col space-y-4 p-4 bg-zinc-900/20 border border-zinc-800 rounded-lg">
       <div className="flex items-center justify-between">
-        <span className="text-xs font-semibold text-neutral-400 uppercase tracking-wider">
+        <span className="text-xs font-semibold text-zinc-400 uppercase tracking-wider">
           Trip Status Lifecycle
         </span>
         <span
           className={`text-xs px-2.5 py-0.5 rounded-full font-medium ${
             trip.status === 'Draft'
-              ? 'bg-neutral-800 text-neutral-300'
+              ? 'bg-zinc-850 text-zinc-300'
               : trip.status === 'Dispatched'
-              ? 'bg-blue-950/50 text-blue-400 border border-blue-900/50'
+              ? 'bg-blue-500/10 text-blue-400 border border-blue-500/20'
               : trip.status === 'Completed'
-              ? 'bg-emerald-950/50 text-emerald-400 border border-emerald-900/50'
-              : 'bg-red-950/50 text-red-400 border border-red-900/50'
+              ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'
+              : 'bg-red-500/10 text-red-400 border border-red-500/20'
           }`}
         >
           {trip.status}
@@ -112,9 +112,9 @@ export const TripLifecycleStepper: React.FC<TripLifecycleStepperProps> = ({
       {!isCancelled ? (
         <div className="relative flex items-center justify-between w-full py-4">
           {/* Progress Line */}
-          <div className="absolute left-0 right-0 top-1/2 -translate-y-1/2 h-0.5 bg-neutral-800 -z-10" />
+          <div className="absolute left-0 right-0 top-1/2 -translate-y-1/2 h-0.5 bg-zinc-800 -z-10" />
           <div
-            className="absolute left-0 top-1/2 -translate-y-1/2 h-0.5 bg-neutral-200 transition-all duration-300 -z-10"
+            className="absolute left-0 top-1/2 -translate-y-1/2 h-0.5 bg-zinc-200 transition-all duration-300 -z-10"
             style={{
               width: `${(currentStep / (statuses.length - 1)) * 100}%`
             }}
@@ -130,8 +130,8 @@ export const TripLifecycleStepper: React.FC<TripLifecycleStepperProps> = ({
                   className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-semibold transition-all border ${
                     isCompletedStep
                       ? 'bg-white text-black border-white'
-                      : 'bg-neutral-900 text-neutral-400 border-neutral-800'
-                  } ${isActiveStep ? 'ring-2 ring-neutral-400 ring-offset-2 ring-offset-black' : ''}`}
+                      : 'bg-zinc-950 text-zinc-400 border-zinc-850'
+                  } ${isActiveStep ? 'ring-2 ring-zinc-500 ring-offset-2 ring-offset-zinc-950' : ''}`}
                 >
                   {isCompletedStep && currentStep > index ? (
                     <Check className="w-4 h-4" />
@@ -148,8 +148,8 @@ export const TripLifecycleStepper: React.FC<TripLifecycleStepperProps> = ({
                     isActiveStep
                       ? 'text-white'
                       : isCompletedStep
-                      ? 'text-neutral-300'
-                      : 'text-neutral-500'
+                      ? 'text-zinc-300'
+                      : 'text-zinc-500'
                   }`}
                 >
                   {status}
@@ -166,13 +166,13 @@ export const TripLifecycleStepper: React.FC<TripLifecycleStepperProps> = ({
       )}
 
       {/* Action Buttons */}
-      <div className="flex items-center justify-end space-x-2 pt-2 border-t border-neutral-900/60">
+      <div className="flex items-center justify-end space-x-2 pt-2 border-t border-zinc-800/60">
         {trip.status === 'Draft' && (
           <>
             <button
               onClick={handleCancel}
               disabled={isMutating}
-              className="px-3 py-1.5 text-xs font-medium border border-neutral-800 text-neutral-400 hover:text-red-400 hover:bg-red-950/20 hover:border-red-900/50 rounded transition-all cursor-pointer flex items-center space-x-1"
+              className="px-3 py-1.5 text-xs font-medium border border-zinc-800 text-zinc-400 hover:text-red-400 hover:bg-red-500/10 hover:border-red-500/20 rounded transition-all cursor-pointer flex items-center space-x-1"
             >
               <Ban className="w-3 h-3" />
               <span>Cancel Trip</span>
@@ -180,7 +180,7 @@ export const TripLifecycleStepper: React.FC<TripLifecycleStepperProps> = ({
             <button
               onClick={handleDispatch}
               disabled={isMutating}
-              className="px-3 py-1.5 text-xs font-medium bg-white text-black hover:bg-neutral-200 rounded transition-all cursor-pointer flex items-center space-x-1"
+              className="px-3 py-1.5 text-xs font-medium bg-white text-black hover:bg-zinc-200 rounded transition-all cursor-pointer flex items-center space-x-1"
             >
               {isMutating ? (
                 <Loader2 className="w-3 h-3 animate-spin" />
@@ -197,7 +197,7 @@ export const TripLifecycleStepper: React.FC<TripLifecycleStepperProps> = ({
             <button
               onClick={handleCancel}
               disabled={isMutating}
-              className="px-3 py-1.5 text-xs font-medium border border-neutral-800 text-neutral-400 hover:text-red-400 hover:bg-red-950/20 hover:border-red-900/50 rounded transition-all cursor-pointer flex items-center space-x-1"
+              className="px-3 py-1.5 text-xs font-medium border border-zinc-800 text-zinc-400 hover:text-red-400 hover:bg-red-500/10 hover:border-red-500/20 rounded transition-all cursor-pointer flex items-center space-x-1"
             >
               <Ban className="w-3 h-3" />
               <span>Cancel Trip</span>
@@ -205,7 +205,7 @@ export const TripLifecycleStepper: React.FC<TripLifecycleStepperProps> = ({
             <button
               onClick={() => setShowCompleteModal(true)}
               disabled={isMutating}
-              className="px-3 py-1.5 text-xs font-medium bg-white text-black hover:bg-neutral-200 rounded transition-all cursor-pointer flex items-center space-x-1"
+              className="px-3 py-1.5 text-xs font-medium bg-white text-black hover:bg-zinc-200 rounded transition-all cursor-pointer flex items-center space-x-1"
             >
               <Flag className="w-3 h-3" />
               <span>Complete Trip</span>
@@ -217,15 +217,15 @@ export const TripLifecycleStepper: React.FC<TripLifecycleStepperProps> = ({
       {/* Complete Trip Modal Overlay */}
       {showCompleteModal && (
         <div className="fixed inset-0 bg-black/80 flex items-center justify-center p-4 z-50 animate-fade-in">
-          <div className="w-full max-w-md bg-neutral-950 border border-neutral-800 rounded-lg p-6 space-y-4 shadow-2xl">
-            <div className="flex items-center justify-between pb-3 border-b border-neutral-800">
+          <div className="w-full max-w-md bg-zinc-900 border border-zinc-800 rounded-lg p-6 space-y-4 shadow-2xl backdrop-blur-xl">
+            <div className="flex items-center justify-between pb-3 border-b border-zinc-800">
               <h3 className="text-sm font-semibold text-white uppercase tracking-wider flex items-center space-x-2">
                 <Flag className="w-4 h-4 text-emerald-400" />
                 <span>Complete Trip Metrics</span>
               </h3>
               <button
                 onClick={() => setShowCompleteModal(false)}
-                className="text-neutral-500 hover:text-white transition-all cursor-pointer"
+                className="text-zinc-500 hover:text-white transition-all cursor-pointer"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -233,7 +233,7 @@ export const TripLifecycleStepper: React.FC<TripLifecycleStepperProps> = ({
 
             <form onSubmit={handleCompleteSubmit} className="space-y-4">
               <div className="flex flex-col space-y-1">
-                <label className="text-[10px] font-semibold text-neutral-400 uppercase tracking-wider">
+                <label className="text-[10px] font-semibold text-zinc-400 uppercase tracking-wider">
                   Actual Distance Traveled (km)
                 </label>
                 <input
@@ -243,12 +243,12 @@ export const TripLifecycleStepper: React.FC<TripLifecycleStepperProps> = ({
                   placeholder="e.g. 124.5"
                   value={actualDistance}
                   onChange={(e) => setActualDistance(e.target.value)}
-                  className="w-full px-3 py-2 text-sm bg-neutral-900 border border-neutral-800 rounded-md focus:outline-none focus:ring-1 focus:ring-neutral-400 text-white transition-all"
+                  className="w-full px-3 py-2 text-sm bg-zinc-950 border border-zinc-800 rounded-md focus:outline-none focus:ring-1 focus:ring-zinc-700 text-white transition-all"
                 />
               </div>
 
               <div className="flex flex-col space-y-1">
-                <label className="text-[10px] font-semibold text-neutral-400 uppercase tracking-wider">
+                <label className="text-[10px] font-semibold text-zinc-400 uppercase tracking-wider">
                   Fuel Consumed (Liters)
                 </label>
                 <input
@@ -258,13 +258,13 @@ export const TripLifecycleStepper: React.FC<TripLifecycleStepperProps> = ({
                   placeholder="e.g. 45.2"
                   value={fuelConsumed}
                   onChange={(e) => setFuelConsumed(e.target.value)}
-                  className="w-full px-3 py-2 text-sm bg-neutral-900 border border-neutral-800 rounded-md focus:outline-none focus:ring-1 focus:ring-neutral-400 text-white transition-all"
+                  className="w-full px-3 py-2 text-sm bg-zinc-950 border border-zinc-800 rounded-md focus:outline-none focus:ring-1 focus:ring-zinc-700 text-white transition-all"
                 />
               </div>
 
               <div className="flex flex-col space-y-1">
-                <label className="text-[10px] font-semibold text-neutral-400 uppercase tracking-wider">
-                  Revenue Generated ($)
+                <label className="text-[10px] font-semibold text-zinc-400 uppercase tracking-wider">
+                  Revenue Generated (INR)
                 </label>
                 <input
                   type="number"
@@ -273,7 +273,7 @@ export const TripLifecycleStepper: React.FC<TripLifecycleStepperProps> = ({
                   placeholder="e.g. 1500"
                   value={revenue}
                   onChange={(e) => setRevenue(e.target.value)}
-                  className="w-full px-3 py-2 text-sm bg-neutral-900 border border-neutral-800 rounded-md focus:outline-none focus:ring-1 focus:ring-neutral-400 text-white transition-all"
+                  className="w-full px-3 py-2 text-sm bg-zinc-950 border border-zinc-800 rounded-md focus:outline-none focus:ring-1 focus:ring-zinc-700 text-white transition-all"
                 />
               </div>
 
@@ -287,14 +287,14 @@ export const TripLifecycleStepper: React.FC<TripLifecycleStepperProps> = ({
                 <button
                   type="button"
                   onClick={() => setShowCompleteModal(false)}
-                  className="px-4 py-2 text-xs font-medium border border-neutral-800 text-neutral-400 hover:text-white hover:bg-neutral-900 rounded transition-all cursor-pointer"
+                  className="px-4 py-2 text-xs font-medium border border-zinc-800 text-zinc-400 hover:text-white hover:bg-zinc-900 rounded transition-all cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={isMutating}
-                  className="px-4 py-2 text-xs font-medium bg-white text-black hover:bg-neutral-200 rounded disabled:bg-neutral-800 disabled:text-neutral-500 flex items-center space-x-1.5 transition-all cursor-pointer"
+                  className="px-4 py-2 text-xs font-medium bg-white text-black hover:bg-zinc-200 rounded disabled:bg-zinc-800 disabled:text-zinc-500 flex items-center space-x-1.5 transition-all cursor-pointer"
                 >
                   {isMutating && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
                   <span>Submit Completion</span>

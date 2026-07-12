@@ -38,9 +38,8 @@ export const TripForm: React.FC<TripFormProps> = ({
     register,
     handleSubmit,
     watch,
-    setValue,
     formState: { errors }
-  } = useForm<FormValues>({
+  } = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
       source: '',
@@ -52,8 +51,8 @@ export const TripForm: React.FC<TripFormProps> = ({
     }
   });
 
-  const selectedVehicleId = watch('vehicle_id');
-  const cargoWeight = watch('cargo_weight');
+  const selectedVehicleId = watch('vehicle_id') as string;
+  const cargoWeight = watch('cargo_weight') as number;
 
   // Find currently selected vehicle to check capacity
   const selectedVehicle = vehicles.find((v) => v.id === selectedVehicleId);
@@ -77,7 +76,7 @@ export const TripForm: React.FC<TripFormProps> = ({
     fetchEligibility();
   }, []);
 
-  const onSubmit = async (values: FormValues) => {
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
       await onSubmitTrip(values);
       onSuccess();
@@ -89,15 +88,15 @@ export const TripForm: React.FC<TripFormProps> = ({
   if (eligibilityLoading) {
     return (
       <div className="flex flex-col items-center justify-center py-10 space-y-3">
-        <Loader2 className="w-8 h-8 text-neutral-500 animate-spin" />
-        <p className="text-sm text-neutral-400">Loading eligible vehicles and drivers...</p>
+        <Loader2 className="w-8 h-8 text-zinc-500 animate-spin" />
+        <p className="text-sm text-zinc-400">Loading eligible vehicles and drivers...</p>
       </div>
     );
   }
 
   if (eligibilityError) {
     return (
-      <div className="p-4 border border-red-800 bg-red-950/20 text-red-400 rounded-lg text-sm flex items-center space-x-2">
+      <div className="p-4 border border-red-500/20 bg-red-500/10 text-red-400 rounded-lg text-sm flex items-center space-x-2">
         <AlertCircle className="w-5 h-5 flex-shrink-0" />
         <span>{eligibilityError}</span>
       </div>
@@ -109,21 +108,21 @@ export const TripForm: React.FC<TripFormProps> = ({
       {/* Locations */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="flex flex-col space-y-1.5">
-          <label className="text-xs font-semibold text-neutral-300 uppercase tracking-wider">Source</label>
+          <label className="text-xs font-semibold text-zinc-300 uppercase tracking-wider">Source</label>
           <input
             {...register('source')}
             placeholder="e.g. Warehouse A"
-            className="w-full px-3 py-2 text-sm bg-neutral-900 border border-neutral-800 rounded-md focus:outline-none focus:ring-1 focus:ring-neutral-400 text-white placeholder-neutral-500 transition-all"
+            className="w-full px-3 py-2 text-sm bg-zinc-950 border border-zinc-800 rounded-md focus:outline-none focus:ring-1 focus:ring-zinc-750 text-white placeholder-zinc-500 transition-all"
           />
           {errors.source && <span className="text-xs text-red-500 mt-0.5">{errors.source.message}</span>}
         </div>
 
         <div className="flex flex-col space-y-1.5">
-          <label className="text-xs font-semibold text-neutral-300 uppercase tracking-wider">Destination</label>
+          <label className="text-xs font-semibold text-zinc-300 uppercase tracking-wider">Destination</label>
           <input
             {...register('destination')}
             placeholder="e.g. Distribution Center B"
-            className="w-full px-3 py-2 text-sm bg-neutral-900 border border-neutral-800 rounded-md focus:outline-none focus:ring-1 focus:ring-neutral-400 text-white placeholder-neutral-500 transition-all"
+            className="w-full px-3 py-2 text-sm bg-zinc-950 border border-zinc-800 rounded-md focus:outline-none focus:ring-1 focus:ring-zinc-750 text-white placeholder-zinc-500 transition-all"
           />
           {errors.destination && <span className="text-xs text-red-500 mt-0.5">{errors.destination.message}</span>}
         </div>
@@ -131,10 +130,10 @@ export const TripForm: React.FC<TripFormProps> = ({
 
       {/* Vehicle selection */}
       <div className="flex flex-col space-y-1.5">
-        <label className="text-xs font-semibold text-neutral-300 uppercase tracking-wider">Vehicle</label>
+        <label className="text-xs font-semibold text-zinc-300 uppercase tracking-wider">Vehicle</label>
         <select
           {...register('vehicle_id')}
-          className="w-full px-3 py-2 text-sm bg-neutral-900 border border-neutral-800 rounded-md focus:outline-none focus:ring-1 focus:ring-neutral-400 text-white transition-all appearance-none cursor-pointer"
+          className="w-full px-3 py-2 text-sm bg-zinc-950 border border-zinc-800 rounded-md focus:outline-none focus:ring-1 focus:ring-zinc-750 text-white transition-all appearance-none cursor-pointer"
         >
           <option value="">-- Select Available Vehicle --</option>
           {vehicles.map((v) => (
@@ -148,10 +147,10 @@ export const TripForm: React.FC<TripFormProps> = ({
 
       {/* Driver selection */}
       <div className="flex flex-col space-y-1.5">
-        <label className="text-xs font-semibold text-neutral-300 uppercase tracking-wider">Driver</label>
+        <label className="text-xs font-semibold text-zinc-300 uppercase tracking-wider">Driver</label>
         <select
           {...register('driver_id')}
-          className="w-full px-3 py-2 text-sm bg-neutral-900 border border-neutral-800 rounded-md focus:outline-none focus:ring-1 focus:ring-neutral-400 text-white transition-all appearance-none cursor-pointer"
+          className="w-full px-3 py-2 text-sm bg-zinc-950 border border-zinc-800 rounded-md focus:outline-none focus:ring-1 focus:ring-zinc-750 text-white transition-all appearance-none cursor-pointer"
         >
           <option value="">-- Select Available Driver --</option>
           {drivers.map((d) => (
@@ -166,23 +165,23 @@ export const TripForm: React.FC<TripFormProps> = ({
       {/* Cargo & Distance */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="flex flex-col space-y-1.5">
-          <label className="text-xs font-semibold text-neutral-300 uppercase tracking-wider">Cargo Weight (kg)</label>
+          <label className="text-xs font-semibold text-zinc-300 uppercase tracking-wider">Cargo Weight (kg)</label>
           <input
             type="number"
             {...register('cargo_weight')}
             placeholder="e.g. 500"
-            className="w-full px-3 py-2 text-sm bg-neutral-900 border border-neutral-800 rounded-md focus:outline-none focus:ring-1 focus:ring-neutral-400 text-white placeholder-neutral-500 transition-all"
+            className="w-full px-3 py-2 text-sm bg-zinc-950 border border-zinc-800 rounded-md focus:outline-none focus:ring-1 focus:ring-zinc-750 text-white placeholder-zinc-500 transition-all"
           />
           {errors.cargo_weight && <span className="text-xs text-red-500 mt-0.5">{errors.cargo_weight.message}</span>}
         </div>
 
         <div className="flex flex-col space-y-1.5">
-          <label className="text-xs font-semibold text-neutral-300 uppercase tracking-wider">Planned Distance (km)</label>
+          <label className="text-xs font-semibold text-zinc-300 uppercase tracking-wider">Planned Distance (km)</label>
           <input
             type="number"
             {...register('planned_distance')}
             placeholder="e.g. 120"
-            className="w-full px-3 py-2 text-sm bg-neutral-900 border border-neutral-800 rounded-md focus:outline-none focus:ring-1 focus:ring-neutral-400 text-white placeholder-neutral-500 transition-all"
+            className="w-full px-3 py-2 text-sm bg-zinc-950 border border-zinc-800 rounded-md focus:outline-none focus:ring-1 focus:ring-zinc-750 text-white placeholder-zinc-500 transition-all"
           />
           {errors.planned_distance && <span className="text-xs text-red-500 mt-0.5">{errors.planned_distance.message}</span>}
         </div>
@@ -190,29 +189,29 @@ export const TripForm: React.FC<TripFormProps> = ({
 
       {/* Capacity Warning Banner */}
       {isOverweight && (
-        <div className="p-3 bg-amber-950/20 border border-amber-900 text-amber-300 rounded-md flex items-start space-x-2 text-xs transition-all animate-pulse">
+        <div className="p-3 bg-amber-500/10 border border-amber-500/20 text-amber-400 rounded-md flex items-start space-x-2 text-xs transition-all animate-pulse">
           <AlertCircle className="w-4 h-4 flex-shrink-0 mt-0.5" />
           <div>
             <span className="font-semibold block">Capacity Warning!</span>
-            The entered cargo weight ({cargoWeight}kg) exceeds the maximum capacity of the selected vehicle ({selectedVehicle.max_load_capacity}kg). Submission will be blocked on the server.
+            The entered cargo weight ({String(cargoWeight)}kg) exceeds the maximum capacity of the selected vehicle ({selectedVehicle.max_load_capacity}kg). Submission will be blocked on the server.
           </div>
         </div>
       )}
 
       {/* Actions */}
-      <div className="flex items-center justify-end space-x-3 pt-4 border-t border-neutral-800">
+      <div className="flex items-center justify-end space-x-3 pt-4 border-t border-zinc-800">
         <button
           type="button"
           onClick={onCancel}
           disabled={isSubmitting}
-          className="px-4 py-2 text-sm font-medium border border-neutral-800 rounded-md text-neutral-400 hover:text-white hover:bg-neutral-900 transition-all cursor-pointer"
+          className="px-4 py-2 text-sm font-medium border border-zinc-800 rounded-md text-zinc-400 hover:text-white hover:bg-zinc-900 transition-all cursor-pointer"
         >
           Cancel
         </button>
         <button
           type="submit"
           disabled={isSubmitting || isOverweight}
-          className="px-4 py-2 text-sm font-medium bg-white text-black hover:bg-neutral-200 rounded-md disabled:bg-neutral-800 disabled:text-neutral-500 disabled:cursor-not-allowed flex items-center space-x-2 transition-all cursor-pointer"
+          className="px-4 py-2 text-sm font-medium bg-white text-black hover:bg-zinc-200 rounded-md disabled:bg-zinc-800 disabled:text-zinc-500 disabled:cursor-not-allowed flex items-center space-x-2 transition-all cursor-pointer"
         >
           {isSubmitting && <Loader2 className="w-4 h-4 animate-spin" />}
           <span>Create Trip</span>

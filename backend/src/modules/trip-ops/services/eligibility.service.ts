@@ -1,4 +1,4 @@
-import pool from '../../../shared/db/pool.js';
+import { pool } from '../../../shared/db/pool.js';
 
 export interface EligibleVehicle {
   id: string;

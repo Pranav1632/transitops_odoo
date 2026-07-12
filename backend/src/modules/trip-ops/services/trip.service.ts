@@ -1,5 +1,5 @@
-import pool from '../../../shared/db/pool.js';
-import { getIo } from '../../../shared/socket/io.js';
+import { pool } from '../../../shared/db/pool.js';
+import { getIO } from '../../../shared/socket/io.js';
 import type { CreateTripInput, CompleteTripInput } from '../validators/validators.js';
 
 export interface Trip {
@@ -24,7 +24,7 @@ export class TripService {
    */
   private emitStatusChange(trip: any) {
     try {
-      const io = getIo();
+      const io = getIO();
       if (io) {
         io.emit('trip_status_updated', trip);
       }

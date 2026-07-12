@@ -28,6 +28,11 @@ export const LiveBoard: React.FC = () => {
   useEffect(() => {
     if (!socket) return;
 
+    // Connect to server since autoConnect is false
+    if (!socket.connected) {
+      socket.connect();
+    }
+
     socket.emit('subscribe_trips');
 
     const handleTripStatusUpdate = (trip: Trip) => {
@@ -54,6 +59,7 @@ export const LiveBoard: React.FC = () => {
     return () => {
       socket.emit('unsubscribe_trips');
       socket.off('trip_status_updated', handleTripStatusUpdate);
+      socket.disconnect();
     };
   }, []);
 

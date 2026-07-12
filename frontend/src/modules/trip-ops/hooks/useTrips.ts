@@ -74,6 +74,11 @@ export const useTrips = (initialStatus?: string) => {
   useEffect(() => {
     if (!socket) return;
 
+    // Connect to server since autoConnect is false
+    if (!socket.connected) {
+      socket.connect();
+    }
+
     // Join room or listen to events
     socket.emit('subscribe_trips');
 
@@ -106,6 +111,7 @@ export const useTrips = (initialStatus?: string) => {
     return () => {
       socket.emit('unsubscribe_trips');
       socket.off('trip_status_updated', handleTripUpdated);
+      socket.disconnect();
     };
   }, [fetchTrips, fetchKPIs]);
 

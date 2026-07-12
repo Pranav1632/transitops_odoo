@@ -6,7 +6,7 @@ import Header from "./Header";
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const isAuthPage = pathname === "/login" || pathname === "/signup";
+  const isAuthPage = pathname === "/login" || pathname === "/signup" || pathname.startsWith("/(auth)");
 
   if (isAuthPage) {
     return <main className="flex-1 flex flex-col">{children}</main>;
@@ -18,12 +18,12 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
       <Sidebar />
 
       {/* Main body section */}
-      <div className="flex-1 flex flex-col overflow-hidden">
+      <div className="flex-1 flex flex-col overflow-hidden min-w-0">
         {/* Top header */}
         <Header />
 
         {/* Dynamic page content */}
-        <main className="flex-1 overflow-y-auto px-8 py-6 relative">
+        <main className="flex-1 overflow-y-auto p-6 relative">
           {children}
         </main>
       </div>

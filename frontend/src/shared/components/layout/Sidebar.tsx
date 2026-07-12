@@ -11,7 +11,8 @@ import {
   Coins, 
   BarChart3, 
   Settings,
-  Shield
+  LogOut,
+  HelpCircle
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useSession } from "@/shared/hooks/useSession";
@@ -31,62 +32,75 @@ export default function Sidebar() {
   const pathname = usePathname();
   const { profile, loading } = useSession();
 
-  const roleName = profile?.role
-    ? profile.role.split("_").map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(" ")
-    : "Guest User";
-
   const initials = profile?.full_name
-    ? profile.full_name.split(" ").map(n => n.charAt(0)).join("").toUpperCase().slice(0, 2)
-    : "GU";
+    ? profile.full_name.split(" ").map((n: string) => n.charAt(0)).join("").toUpperCase().slice(0, 2)
+    : "TO";
 
-  const fullName = profile?.full_name || "User";
+  const fullName = profile?.full_name || "TransitOps User";
+  const roleName = profile?.role
+    ? profile.role.split("_").map((w: string) => w.charAt(0).toUpperCase() + w.slice(1)).join(" ")
+    : "Guest";
 
   return (
-    <aside className="w-64 bg-zinc-950 text-zinc-200 border-r border-zinc-800 flex flex-col h-screen sticky top-0">
-      <div className="p-6 border-b border-zinc-800 flex items-center gap-3">
-        <div className="bg-emerald-500/10 p-2 rounded-lg border border-emerald-500/20">
-          <Shield className="w-6 h-6 text-emerald-400" />
+    <aside className="w-60 bg-white dark:bg-zinc-900 border-r border-zinc-100 dark:border-zinc-800 flex flex-col h-screen sticky top-0 shadow-sm">
+      {/* Logo */}
+      <div className="px-5 py-5 border-b border-zinc-100 dark:border-zinc-800 flex items-center gap-3">
+        <div className="w-8 h-8 rounded-xl bg-blue-600 flex items-center justify-center shadow-md shadow-blue-200 dark:shadow-blue-900/40">
+          <span className="text-white font-black text-sm">T</span>
         </div>
         <div>
-          <h1 className="font-bold text-lg text-white leading-tight">TransitOps</h1>
-          <span className="text-xs text-zinc-500 font-medium">Enterprise Fleet OS</span>
+          <p className="font-bold text-zinc-900 dark:text-white text-sm leading-none">TransitOps</p>
+          <p className="text-[10px] text-zinc-400 font-medium mt-0.5">Enterprise Fleet OS</p>
         </div>
       </div>
-      
-      <nav className="flex-1 px-4 py-6 space-y-1.5 overflow-y-auto">
+
+      {/* Navigation */}
+      <nav className="flex-1 px-3 py-4 space-y-0.5 overflow-y-auto">
         {navItems.map((item) => {
-          const isActive = pathname === item.href;
+          const isActive = pathname === item.href || (item.href !== "/dashboard" && pathname.startsWith(item.href));
           const Icon = item.icon;
           return (
             <Link
               key={item.name}
               href={item.href}
               className={cn(
-                "flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200",
+                "flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-150 group",
                 isActive
-                  ? "bg-zinc-800 text-white shadow-sm border-l-4 border-emerald-500 pl-3"
-                  : "text-zinc-400 hover:text-white hover:bg-zinc-900/50"
+                  ? "bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400 font-semibold"
+                  : "text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 hover:bg-zinc-50 dark:hover:bg-zinc-800/50"
               )}
             >
-              <Icon className={cn("w-5 h-5", isActive ? "text-emerald-400" : "text-zinc-400")} />
-              {item.name}
+              <Icon className={cn("w-4 h-4 flex-shrink-0 transition-colors", isActive ? "text-blue-600 dark:text-blue-400" : "text-zinc-400 group-hover:text-zinc-600 dark:group-hover:text-zinc-300")} />
+              <span className="truncate">{item.name}</span>
+              {isActive && (
+                <div className="ml-auto w-1.5 h-1.5 rounded-full bg-blue-600 dark:bg-blue-400" />
+              )}
             </Link>
           );
         })}
       </nav>
-      
-      <div className="p-4 border-t border-zinc-800 bg-zinc-900/20">
-        <div className="flex items-center gap-3 px-2 py-1.5">
-          <div className="w-8 h-8 rounded-full bg-emerald-500/20 flex items-center justify-center font-bold text-emerald-400 border border-emerald-500/30">
-            {loading ? "..." : initials}
+
+      {/* Bottom section */}
+      <div className="border-t border-zinc-100 dark:border-zinc-800 p-3 space-y-0.5">
+        <button className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-all">
+          <HelpCircle className="w-4 h-4 text-zinc-400" />
+          <span>Help & Support</span>
+        </button>
+        <button className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-zinc-500 dark:text-zinc-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/10 transition-all">
+          <LogOut className="w-4 h-4" />
+          <span>Sign out</span>
+        </button>
+
+        {/* User info */}
+        <div className="flex items-center gap-2.5 px-3 py-3 mt-1 rounded-xl bg-zinc-50 dark:bg-zinc-800/50 border border-zinc-100 dark:border-zinc-800">
+          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center font-bold text-white text-xs flex-shrink-0 shadow-sm">
+            {loading ? "…" : initials}
           </div>
-          <div>
-            <p className="text-xs font-semibold text-white leading-none">
+          <div className="min-w-0">
+            <p className="text-xs font-semibold text-zinc-800 dark:text-zinc-200 truncate leading-none">
               {loading ? "Loading..." : fullName}
             </p>
-            <p className="text-[10px] text-zinc-500 mt-1">
-              {loading ? "Please wait" : roleName}
-            </p>
+            <p className="text-[10px] text-zinc-400 mt-0.5 truncate">{loading ? "" : roleName}</p>
           </div>
         </div>
       </div>

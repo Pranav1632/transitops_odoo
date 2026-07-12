@@ -162,13 +162,16 @@ export function useReports() {
   // Initial fetches
   useEffect(() => {
     let mounted = true;
-    if (mounted) {
-      fetchVehiclesAndTrips();
-      fetchMaintenance();
-      fetchFuelLogs();
-      fetchExpenses();
-      fetchReports();
-    }
+    const loadData = async () => {
+      if (mounted) {
+        await fetchVehiclesAndTrips();
+        await fetchMaintenance();
+        await fetchFuelLogs();
+        await fetchExpenses();
+        await fetchReports();
+      }
+    };
+    loadData();
     return () => { mounted = false; };
   }, [fetchVehiclesAndTrips, fetchMaintenance, fetchFuelLogs, fetchExpenses, fetchReports]);
 

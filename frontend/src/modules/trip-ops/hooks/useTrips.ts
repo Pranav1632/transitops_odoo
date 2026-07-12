@@ -64,10 +64,13 @@ export const useTrips = (initialStatus?: string) => {
   // Initial and reactive fetch
   useEffect(() => {
     let mounted = true;
-    fetchTrips();
-    if (mounted) {
-      fetchKPIs();
-    }
+    const loadData = async () => {
+      if (mounted) {
+        await fetchTrips();
+        await fetchKPIs();
+      }
+    };
+    loadData();
     return () => { mounted = false; };
   }, [fetchTrips, fetchKPIs]);
 

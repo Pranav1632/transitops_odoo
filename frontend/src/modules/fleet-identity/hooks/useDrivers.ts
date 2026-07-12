@@ -42,9 +42,12 @@ export function useDrivers() {
 
   useEffect(() => {
     let mounted = true;
-    if (mounted) {
-      fetchDrivers();
-    }
+    const loadData = async () => {
+      if (mounted) {
+        await fetchDrivers();
+      }
+    };
+    loadData();
     return () => { mounted = false; };
   }, [fetchDrivers]);
 

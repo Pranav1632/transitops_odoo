@@ -44,9 +44,12 @@ export function useVehicles() {
 
   useEffect(() => {
     let mounted = true;
-    if (mounted) {
-      fetchVehicles();
-    }
+    const loadData = async () => {
+      if (mounted) {
+        await fetchVehicles();
+      }
+    };
+    loadData();
     return () => { mounted = false; };
   }, [fetchVehicles]);
 

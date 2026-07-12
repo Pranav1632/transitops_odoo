@@ -5,50 +5,58 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.redisClient = void 0;
 exports.getOrSetCache = getOrSetCache;
-const redis_1 = require("redis");
 const dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config();
-const redisUrl = process.env.REDIS_URL || 'redis://localhost:6379';
-exports.redisClient = (0, redis_1.createClient)({
-    url: redisUrl,
-});
-exports.redisClient.on('error', (err) => console.error('Redis Client Error', err));
-// Connect to Redis on startup
+
+// ─── Optional Redis ───────────────────────────────────────────────────────────
+// Redis is used only for caching. When unavailable the app falls back to
+// hitting the database directly – fully functional without cache.
+// ─────────────────────────────────────────────────────────────────────────────
+
+let _client = null;
+let _connected = false;
+
+const noopClient = {
+    get: async (_k) => null,
+    set: async () => {},
+    del: async () => {},
+};
+
+// Try to connect – fire and forget, server starts regardless
 (async () => {
     try {
-        await exports.redisClient.connect();
-        console.log('Connected to Redis');
-    }
-    catch (error) {
-        console.error('Failed to connect to Redis:', error);
+        const { createClient } = require('redis');
+        const redisUrl = process.env.REDIS_URL || 'redis://localhost:6379';
+        const client = createClient({ url: redisUrl });
+        client.on('error', () => {}); // silence errors
+        await client.connect();
+        _client = client;
+        _connected = true;
+        console.log('Connected to Redis (cache enabled)');
+    } catch (_e) {
+        console.log('Redis unavailable – running without cache (DB fallback active)');
     }
 })();
-/**
- * Caching helper: getOrSetCache
- * @param key Cache key
- * @param ttl Time-to-live in seconds
- * @param fetchFn Asynchronous fallback function to fetch data if cache misses
- */
+
+exports.redisClient = new Proxy({}, {
+    get(_target, prop) {
+        const c = _connected ? _client : noopClient;
+        return c[prop]?.bind(c);
+    },
+});
+
 async function getOrSetCache(key, ttl, fetchFn) {
-    try {
-        const cachedData = await exports.redisClient.get(key);
-        if (cachedData !== null) {
-            return JSON.parse(cachedData);
-        }
+    if (_connected) {
+        try {
+            const cached = await _client.get(key);
+            if (cached !== null) return JSON.parse(cached);
+        } catch (_e) { /* ignore */ }
     }
-    catch (error) {
-        console.error(`Cache read error for key ${key}:`, error);
-    }
-    // Cache miss, fetch fresh data
     const freshData = await fetchFn();
-    try {
-        await exports.redisClient.set(key, JSON.stringify(freshData), {
-            EX: ttl,
-        });
-    }
-    catch (error) {
-        console.error(`Cache write error for key ${key}:`, error);
+    if (_connected) {
+        try {
+            await _client.set(key, JSON.stringify(freshData), { EX: ttl });
+        } catch (_e) { /* ignore */ }
     }
     return freshData;
 }
-//# sourceMappingURL=client.js.map

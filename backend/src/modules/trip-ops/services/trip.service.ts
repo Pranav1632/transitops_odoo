@@ -1,6 +1,6 @@
-import pool from '../../../shared/db/pool';
-import { getIo } from '../../../shared/socket/io';
-import { CreateTripInput, CompleteTripInput } from '../validators/validators';
+import pool from '../../../shared/db/pool.js';
+import { getIo } from '../../../shared/socket/io.js';
+import type { CreateTripInput, CompleteTripInput } from '../validators/validators.js';
 
 export interface Trip {
   id: string;

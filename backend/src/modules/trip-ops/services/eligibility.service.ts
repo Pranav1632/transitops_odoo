@@ -1,4 +1,4 @@
-import pool from '../../../shared/db/pool';
+import pool from '../../../shared/db/pool.js';
 
 export interface EligibleVehicle {
   id: string;
@@ -31,7 +31,7 @@ export class EligibilityService {
     `;
     const result = await pool.query(query);
     // Explicitly parse capacity to number if database returns it as string (numeric type in pg)
-    return result.rows.map(row => ({
+    return result.rows.map((row: any) => ({
       ...row,
       max_load_capacity: Number(row.max_load_capacity)
     }));

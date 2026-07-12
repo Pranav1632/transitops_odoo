@@ -67,7 +67,7 @@ export default function TopVehiclesBar({ data = [] }: TopVehiclesBarProps) {
               color: "#fff",
               fontSize: "12px"
             }}
-            formatter={(value: number) => [`₹${Number(value).toLocaleString()}`, "Total Expense"]}
+            formatter={(value: any) => [`₹${Number(value || 0).toLocaleString()}`, "Total Expense"]}
           />
           <Bar 
             dataKey="cost" 

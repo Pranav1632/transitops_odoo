@@ -7,7 +7,8 @@ import VehicleForm from '@/modules/fleet-identity/components/VehicleForm';
 import { useSession } from '@/shared/hooks/useSession';
 import { Plus, Search, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Vehicle, CreateVehicleInput, UpdateVehicleInput } from '@/shared/types/database.types';
+import { CreateVehicleInput, UpdateVehicleInput } from '@/shared/types/database.types';
+import { Vehicle } from '@/modules/fleet-identity/api/fleetApi';
 
 export default function FleetPage() {
   const { vehicles, loading, page, setPage, totalPages, filters, actions } = useVehicles();
@@ -30,9 +31,9 @@ export default function FleetPage() {
 
   const handleFormSubmit = async (data: CreateVehicleInput | UpdateVehicleInput) => {
     if (editingVehicle) {
-      await actions.editVehicle(editingVehicle.id, data);
+      await actions.editVehicle(editingVehicle.id, data as UpdateVehicleInput);
     } else {
-      await actions.addVehicle(data);
+      await actions.addVehicle(data as CreateVehicleInput);
     }
   };
 
@@ -161,7 +162,7 @@ export default function FleetPage() {
         isOpen={isFormOpen}
         onClose={() => setIsFormOpen(false)}
         onSubmit={handleFormSubmit}
-        initialValues={editingVehicle}
+        initialValues={editingVehicle ? { ...editingVehicle, region: editingVehicle.region ?? null } : undefined}
       />
     </div>
   );

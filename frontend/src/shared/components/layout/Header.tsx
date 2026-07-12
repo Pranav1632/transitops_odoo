@@ -4,6 +4,7 @@ import { usePathname } from "next/navigation";
 import Breadcrumb from "./Breadcrumb";
 import { Bell, Search, Sun, Moon } from "lucide-react";
 import { useState, useEffect } from "react";
+import { useSession } from "@/shared/hooks/useSession";
 
 const routeMap: Record<string, string> = {
   dashboard: "Dashboard Overview",
@@ -21,6 +22,7 @@ export default function Header() {
   const pageKey = pathname.split("/").filter(Boolean)[0] || "";
   const pageTitle = routeMap[pageKey] || "TransitOps Dashboard";
 
+  const { profile, loading } = useSession();
   const [darkMode, setDarkMode] = useState(false);
 
   const isDark = typeof window !== 'undefined' && document.documentElement.classList.contains("dark");
@@ -39,6 +41,10 @@ export default function Header() {
       }
     }
   };
+
+  const roleBadge = profile?.role
+    ? profile.role.toUpperCase()
+    : "GUEST";
 
   return (
     <header className="h-16 border-b border-zinc-200 dark:border-zinc-800 bg-white/80 dark:bg-zinc-950/80 backdrop-blur-md sticky top-0 z-30 px-8 flex items-center justify-between">
@@ -83,8 +89,12 @@ export default function Header() {
 
         <div className="flex items-center gap-2">
           <div className="text-right max-sm:hidden">
-            <p className="text-xs font-semibold text-zinc-800 dark:text-zinc-200">Alex Mercer</p>
-            <span className="text-[10px] text-zinc-500 bg-zinc-100 dark:bg-zinc-900 px-1.5 py-0.5 rounded font-mono">FIN_ANALYST</span>
+            <p className="text-xs font-semibold text-zinc-850 dark:text-zinc-200">
+              {loading ? "Loading..." : (profile?.full_name || "User")}
+            </p>
+            <span className="text-[10px] text-zinc-500 bg-zinc-100 dark:bg-zinc-900 px-1.5 py-0.5 rounded font-mono">
+              {loading ? "WAIT" : roleBadge}
+            </span>
           </div>
         </div>
       </div>

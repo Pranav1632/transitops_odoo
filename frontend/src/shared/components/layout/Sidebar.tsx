@@ -14,6 +14,7 @@ import {
   Shield
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useSession } from "@/shared/hooks/useSession";
 
 const navItems = [
   { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
@@ -28,6 +29,17 @@ const navItems = [
 
 export default function Sidebar() {
   const pathname = usePathname();
+  const { profile, loading } = useSession();
+
+  const roleName = profile?.role
+    ? profile.role.split("_").map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(" ")
+    : "Guest User";
+
+  const initials = profile?.full_name
+    ? profile.full_name.split(" ").map(n => n.charAt(0)).join("").toUpperCase().slice(0, 2)
+    : "GU";
+
+  const fullName = profile?.full_name || "User";
 
   return (
     <aside className="w-64 bg-zinc-950 text-zinc-200 border-r border-zinc-800 flex flex-col h-screen sticky top-0">
@@ -66,11 +78,15 @@ export default function Sidebar() {
       <div className="p-4 border-t border-zinc-800 bg-zinc-900/20">
         <div className="flex items-center gap-3 px-2 py-1.5">
           <div className="w-8 h-8 rounded-full bg-emerald-500/20 flex items-center justify-center font-bold text-emerald-400 border border-emerald-500/30">
-            FA
+            {loading ? "..." : initials}
           </div>
           <div>
-            <p className="text-xs font-semibold text-white leading-none">Alex Mercer</p>
-            <p className="text-[10px] text-zinc-500">Financial Analyst</p>
+            <p className="text-xs font-semibold text-white leading-none">
+              {loading ? "Loading..." : fullName}
+            </p>
+            <p className="text-[10px] text-zinc-500 mt-1">
+              {loading ? "Please wait" : roleName}
+            </p>
           </div>
         </div>
       </div>

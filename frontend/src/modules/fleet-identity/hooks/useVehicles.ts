@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { toast } from 'sonner';
-import { Vehicle, CreateVehicleInput, UpdateVehicleInput } from '@/shared/types/database.types';
+import { CreateVehicleInput, UpdateVehicleInput } from '@/shared/types/database.types';
+import { Vehicle } from '../api/fleetApi';
 import {
   getVehiclesApi,
   createVehicleApi,

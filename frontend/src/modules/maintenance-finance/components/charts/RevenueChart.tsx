@@ -58,7 +58,7 @@ export default function RevenueChart({ data = [] }: RevenueChartProps) {
               color: "#fff",
               fontSize: "12px"
             }}
-            formatter={(value: number) => [`₹${Number(value).toLocaleString()}`, ""]}
+            formatter={(value: any) => [`₹${Number(value || 0).toLocaleString()}`, ""]}
           />
           <Legend 
             verticalAlign="top" 

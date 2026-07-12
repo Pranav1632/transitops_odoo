@@ -294,9 +294,9 @@ export default function TripsPage() {
                                   {isDispatcher ? (
                                     <TripLifecycleStepper
                                       trip={trip}
-                                      onDispatch={dispatchTrip}
-                                      onComplete={completeTrip}
-                                      onCancel={cancelTrip}
+                                      onDispatch={async (id) => { await dispatchTrip(id); }}
+                                      onComplete={async (id, data) => { await completeTrip(id, data); }}
+                                      onCancel={async (id) => { await cancelTrip(id); }}
                                       isMutating={isMutating}
                                     />
                                   ) : (
@@ -376,7 +376,7 @@ export default function TripsPage() {
                 refetch();
               }}
               onCancel={() => setIsCreateOpen(false)}
-              onSubmitTrip={createTrip}
+              onSubmitTrip={async (data) => { await createTrip(data); }}
               isSubmitting={isMutating}
             />
           </div>

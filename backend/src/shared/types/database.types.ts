@@ -162,7 +162,8 @@ export interface Database {
           description: string;
           cost: number;
           status: Database['public']['Enums']['maintenance_status'];
-          service_date: string;
+          start_date: string;
+          end_date: string | null;
           created_at: string;
           updated_at: string;
         };
@@ -172,7 +173,8 @@ export interface Database {
           description: string;
           cost?: number;
           status?: Database['public']['Enums']['maintenance_status'];
-          service_date?: string;
+          start_date?: string;
+          end_date?: string | null;
           created_at?: string;
           updated_at?: string;
         };
@@ -182,7 +184,8 @@ export interface Database {
           description?: string;
           cost?: number;
           status?: Database['public']['Enums']['maintenance_status'];
-          service_date?: string;
+          start_date?: string;
+          end_date?: string | null;
           created_at?: string;
           updated_at?: string;
         };

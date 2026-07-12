@@ -3,28 +3,76 @@ import { pool } from '../../shared/db/pool';
 
 const router = Router();
 
-// Run startup database validation/migration to ensure start_date and end_date columns exist in maintenance_logs
+let schemaReadyPromise: Promise<void> | undefined;
+
+const logSchemaError = (error: unknown) => {
+  console.error(
+    'Unable to validate or migrate maintenance_logs schema. Check DATABASE_URL network access, SSL, and Supabase pooler settings.',
+    error,
+  );
+};
+
+// Lazily validate/migrate because cloud Postgres connections can be slow during app startup.
 async function ensureSchema() {
+  const client = await pool.connect();
   try {
-    const res = await pool.query(`
-      SELECT column_name 
-      FROM information_schema.columns 
-      WHERE table_name = 'maintenance_logs' AND column_name = 'start_date'
+    await client.query('BEGIN');
+
+    const columns = await client.query<{ column_name: string }>(`
+      SELECT column_name
+      FROM information_schema.columns
+      WHERE table_schema = 'public'
+        AND table_name = 'maintenance_logs'
+        AND column_name IN ('service_date', 'start_date', 'end_date')
     `);
-    if (res.rowCount === 0) {
-      console.log('Migrating maintenance_logs to add start_date and end_date columns...');
-      await pool.query(`
-        ALTER TABLE maintenance_logs 
-        ADD COLUMN start_date DATE NOT NULL DEFAULT CURRENT_DATE,
-        ADD COLUMN end_date DATE;
+    const columnNames = new Set(columns.rows.map((row) => row.column_name));
+    const hasServiceDate = columnNames.has('service_date');
+
+    await client.query(`
+      ALTER TABLE public.maintenance_logs
+      ADD COLUMN IF NOT EXISTS start_date DATE,
+      ADD COLUMN IF NOT EXISTS end_date DATE
+    `);
+
+    if (hasServiceDate) {
+      await client.query(`
+        UPDATE public.maintenance_logs
+        SET start_date = COALESCE(start_date, service_date, CURRENT_DATE)
+        WHERE start_date IS NULL
       `);
-      console.log('Database migrated successfully (start_date/end_date added).');
+    } else {
+      await client.query(`
+        UPDATE public.maintenance_logs
+        SET start_date = COALESCE(start_date, CURRENT_DATE)
+        WHERE start_date IS NULL
+      `);
     }
+
+    await client.query(`
+      ALTER TABLE public.maintenance_logs
+      ALTER COLUMN start_date SET DEFAULT CURRENT_DATE,
+      ALTER COLUMN start_date SET NOT NULL
+    `);
+
+    await client.query('COMMIT');
   } catch (err) {
-    console.error('Error validating or migrating maintenance_logs schema:', err);
+    await client.query('ROLLBACK').catch(() => {});
+    throw err;
+  } finally {
+    client.release();
   }
 }
-ensureSchema();
+
+function ensureSchemaReady() {
+  if (!schemaReadyPromise) {
+    schemaReadyPromise = ensureSchema().catch((error) => {
+      schemaReadyPromise = undefined;
+      throw error;
+    });
+  }
+
+  return schemaReadyPromise;
+}
 
 // Health Check
 router.get('/health', (req, res) => {
@@ -33,6 +81,16 @@ router.get('/health', (req, res) => {
 
 router.get('/test', (req, res) => {
   res.json({ message: 'test success' });
+});
+
+router.use(async (req, res, next) => {
+  try {
+    await ensureSchemaReady();
+    next();
+  } catch (error) {
+    logSchemaError(error);
+    next(error);
+  }
 });
 
 

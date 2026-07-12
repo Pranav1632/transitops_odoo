@@ -72,7 +72,8 @@ create table maintenance_logs (
   description  text not null,
   cost         numeric not null default 0,
   status       maintenance_status not null default 'Active',
-  service_date date not null default current_date,
+  start_date   date not null default current_date,
+  end_date     date,
   created_at   timestamptz not null default now(),
   updated_at   timestamptz not null default now()
 );

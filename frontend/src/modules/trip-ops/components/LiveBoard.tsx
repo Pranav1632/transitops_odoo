@@ -15,8 +15,8 @@ export const LiveBoard: React.FC = () => {
       try {
         const response = await tripApi.getTrips({ status: 'Dispatched', limit: 50 });
         setActiveTrips(response.trips);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'Failed to load active dispatch board');
+      } catch (err: any) {
+        setError(err.message || 'Failed to load active dispatch board');
       } finally {
         setLoading(false);
       }
@@ -64,71 +64,71 @@ export const LiveBoard: React.FC = () => {
   }, []);
 
   return (
-    <div className="flex flex-col space-y-4 p-5 bg-zinc-900/40 border border-zinc-800 rounded-xl shadow-xl backdrop-blur-md">
-      <div className="flex items-center justify-between border-b border-zinc-800 pb-3">
-        <h2 className="text-sm font-bold text-white uppercase tracking-wider flex items-center space-x-2">
-          <Navigation className="w-4 h-4 text-blue-500" />
+    <div className="flex flex-col space-y-4 p-5 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl shadow-sm">
+      <div className="flex items-center justify-between border-b border-zinc-100 dark:border-zinc-800 pb-3">
+        <h2 className="text-sm font-bold text-zinc-900 dark:text-white uppercase tracking-wider flex items-center space-x-2">
+          <Navigation className="w-4 h-4 text-emerald-600" />
           <span>Live Dispatch Board</span>
         </h2>
-        <div className="flex items-center space-x-1.5 bg-zinc-950 px-2.5 py-1 rounded-full border border-zinc-800">
+        <div className="flex items-center space-x-1.5 bg-zinc-50 dark:bg-zinc-950 px-2.5 py-1 rounded-full border border-zinc-200 dark:border-zinc-800">
           <span className="relative flex h-2 w-2">
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
             <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
           </span>
-          <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">Live Feed</span>
+          <span className="text-[10px] font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-widest">Live Feed</span>
         </div>
       </div>
 
       {loading ? (
         <div className="flex flex-col items-center justify-center py-8 space-y-2">
-          <Loader2 className="w-6 h-6 text-zinc-650 animate-spin" />
+          <Loader2 className="w-6 h-6 text-zinc-400 animate-spin" />
           <span className="text-xs text-zinc-500">Connecting to feed...</span>
         </div>
       ) : error ? (
-        <div className="text-xs text-red-500 p-3 bg-red-500/10 border border-red-500/20 rounded-md">
+        <div className="text-xs text-red-500 p-3 bg-red-50 dark:bg-red-950/10 border border-red-200 dark:border-red-900/50 rounded-lg">
           {error}
         </div>
       ) : activeTrips.length === 0 ? (
-        <div className="text-center py-8 border border-dashed border-zinc-800 rounded-md">
-          <p className="text-xs text-zinc-500 font-medium">No vehicles currently in transit.</p>
-          <p className="text-[10px] text-zinc-600 mt-1">Dispatched trips will appear here in real-time.</p>
+        <div className="text-center py-8 border border-dashed border-zinc-200 dark:border-zinc-800 rounded-xl">
+          <p className="text-xs text-zinc-400 font-medium">No vehicles currently in transit.</p>
+          <p className="text-[10px] text-zinc-550 dark:text-zinc-500 mt-1">Dispatched trips will appear here in real-time.</p>
         </div>
       ) : (
-        <div className="max-h-[350px] overflow-y-auto space-y-3 pr-1 scrollbar-thin scrollbar-thumb-zinc-800">
+        <div className="max-h-[350px] overflow-y-auto space-y-3 pr-1 scrollbar-thin scrollbar-thumb-zinc-200 dark:scrollbar-thumb-zinc-800">
           {activeTrips.map((trip) => (
             <div
               key={trip.id}
-              className="p-3 bg-zinc-950/40 border border-zinc-850 hover:border-zinc-800 rounded-md flex flex-col space-y-2.5 transition-all"
+              className="p-4 bg-zinc-50 dark:bg-zinc-950/40 border border-zinc-200 dark:border-zinc-800 hover:border-zinc-300 dark:hover:border-zinc-700 rounded-xl flex flex-col space-y-2.5 transition-all shadow-sm"
             >
               {/* Route */}
               <div className="flex items-center justify-between text-xs">
-                <div className="flex items-center space-x-1.5 font-semibold text-zinc-200">
-                  <MapPin className="w-3.5 h-3.5 text-zinc-500" />
+                <div className="flex items-center space-x-1.5 font-semibold text-zinc-850 dark:text-zinc-200">
+                  <MapPin className="w-3.5 h-3.5 text-zinc-400" />
                   <span>{trip.source}</span>
-                  <span className="text-zinc-600">→</span>
+                  <span className="text-zinc-400 dark:text-zinc-650">→</span>
                   <span>{trip.destination}</span>
                 </div>
-                <span className="text-[10px] text-zinc-500 font-mono">
+                <span className="text-[10px] text-zinc-500 dark:text-zinc-400 font-mono">
                   {trip.planned_distance} km
                 </span>
               </div>
 
               {/* Assignment details */}
-              <div className="grid grid-cols-2 gap-2 text-[11px] text-zinc-400">
+              <div className="grid grid-cols-2 gap-2 text-[11px] text-zinc-600 dark:text-zinc-405">
                 <div className="flex items-center space-x-1">
-                  <Truck className="w-3.5 h-3.5 text-zinc-500" />
+                  <Truck className="w-3.5 h-3.5 text-zinc-400" />
                   <span className="truncate">
                     {trip.vehicle_name || 'Vehicle'} ({trip.vehicle_registration || 'Unknown'})
                   </span>
                 </div>
                 <div className="flex items-center space-x-1">
-                  <User className="w-3.5 h-3.5 text-zinc-500" />
+                  <User className="w-3.5 h-3.5 text-zinc-400" />
                   <span className="truncate">{trip.driver_name || 'Driver'}</span>
                 </div>
               </div>
 
               {/* Status Bar */}
-              <div className="w-full bg-zinc-950 h-1.5 rounded-full overflow-hidden">
+              <div className="w-full bg-zinc-200 dark:bg-zinc-950 h-1.5 rounded-full overflow-hidden">
                 <div className="h-full bg-blue-500 animate-pulse" style={{ width: '45%' }} />
               </div>
             </div>

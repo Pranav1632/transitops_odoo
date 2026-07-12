@@ -38,9 +38,10 @@ export const TripForm: React.FC<TripFormProps> = ({
     register,
     handleSubmit,
     watch,
+    setValue,
     formState: { errors }
-  } = useForm({
-    resolver: zodResolver(formSchema),
+  } = useForm<FormValues>({
+    resolver: zodResolver(formSchema) as any,
     defaultValues: {
       source: '',
       destination: '',

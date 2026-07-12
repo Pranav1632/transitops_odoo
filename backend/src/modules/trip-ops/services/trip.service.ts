@@ -178,14 +178,6 @@ export class TripService {
         data.revenue
       ]);
 
-      // 3. Update vehicle odometer (adds actual distance of the completed trip)
-      const updateOdometerQuery = `
-        UPDATE vehicles
-        SET odometer = odometer + $2, updated_at = NOW()
-        WHERE id = $1
-      `;
-      await client.query(updateOdometerQuery, [trip.vehicle_id, data.actual_distance]);
-
       await client.query('COMMIT');
       const completedTrip = updateRes.rows[0];
       this.emitStatusChange(completedTrip);

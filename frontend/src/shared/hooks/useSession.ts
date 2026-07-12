@@ -1,22 +1,52 @@
+'use client';
+
+import { useState, useEffect } from 'react';
+
 export interface SessionUser {
   id: string;
   email: string;
-  role: "Fleet Manager" | "Dispatcher" | "Safety Officer" | "Financial Analyst";
+  role: string;
   name: string;
 }
 
 export function useSession() {
-  const user: SessionUser = {
-    id: "user_mock_01",
-    email: "alex.mercer@transitops.com",
-    role: "Financial Analyst",
-    name: "Alex Mercer",
-  };
+  const [user, setUser] = useState<SessionUser | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  useEffect(() => {
+    const token = typeof window !== 'undefined' ? localStorage.getItem('sb-token') : null;
+    const profileStr = typeof window !== 'undefined' ? localStorage.getItem('sb-profile') : null;
+
+    if (token && profileStr) {
+      try {
+        const profile = JSON.parse(profileStr);
+        setUser({
+          id: profile.id || '',
+          email: profile.email || '',
+          role: profile.role || '',
+          name: profile.fullName || '',
+        });
+        setIsAuthenticated(true);
+      } catch (e) {
+        if (typeof window !== 'undefined') {
+          localStorage.removeItem('sb-token');
+          localStorage.removeItem('sb-profile');
+        }
+      }
+    }
+    setLoading(false);
+  }, []);
 
   return {
-    user,
-    session: { access_token: "mock-jwt-token" },
-    loading: false,
-    isAuthenticated: true,
+    user: user ? { email: user.email } : null,
+    profile: user ? {
+      id: user.id,
+      full_name: user.name,
+      role: user.role,
+    } : null,
+    session: { access_token: typeof window !== 'undefined' ? localStorage.getItem('sb-token') : null },
+    loading,
+    isAuthenticated,
   };
 }

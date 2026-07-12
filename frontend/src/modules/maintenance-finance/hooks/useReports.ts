@@ -14,15 +14,10 @@ import { toast } from "sonner";
 // Define proper type for reports data
 interface ReportsData {
   kpis: {
-    totalRevenue: number;
-    totalExpenses: number;
-    totalFuelCost: number;
-    totalMaintenanceCost: number;
-    profitMargin: number;
-    vehiclesCount: number;
-    tripsCount: number;
-    avgTripDistance: number;
-    avgFuelEfficiency: number;
+    totalOperationalCost: number;
+    fuelEfficiency: number;
+    utilizationRate: number;
+    overallROI: number;
   };
   vehicleROIs: Array<{
     reg_number: string;

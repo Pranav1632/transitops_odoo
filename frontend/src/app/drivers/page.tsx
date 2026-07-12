@@ -30,9 +30,9 @@ export default function DriversPage() {
 
   const handleFormSubmit = async (data: CreateDriverInput | UpdateDriverInput) => {
     if (editingDriver) {
-      await actions.editDriver(editingDriver.id, data);
+      await actions.editDriver(editingDriver.id, data as UpdateDriverInput);
     } else {
-      await actions.addDriver(data);
+      await actions.addDriver(data as CreateDriverInput);
     }
   };
 

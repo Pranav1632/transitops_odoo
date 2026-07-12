@@ -92,6 +92,25 @@ export type MaintenanceLog = Database["public"]["Tables"]["maintenance_logs"]["R
 export type FuelLog = Database["public"]["Tables"]["fuel_logs"]["Row"];
 export type Expense = Database["public"]["Tables"]["expenses"]["Row"];
 
+// Input types for create/update operations
+export type CreateVehicleInput = Omit<Vehicle, "id" | "created_at" | "updated_at">;
+export type UpdateVehicleInput = Partial<CreateVehicleInput>;
+export type CreateDriverInput = Omit<Driver, "id" | "created_at" | "updated_at">;
+export type UpdateDriverInput = Partial<CreateDriverInput>;
+
+// Auth types
+export type SignupInput = {
+  email: string;
+  password: string;
+  fullName: string;
+  role: "fleet_manager" | "dispatcher" | "safety_officer" | "financial_analyst";
+};
+
+export type LoginInput = {
+  email: string;
+  password: string;
+};
+
 // Pick types defined as minimal column definitions
 export type EligibleVehicle = Pick<Vehicle, "id" | "registration_number" | "model" | "status" | "odometer">;
 export type EligibleDriver = Pick<Driver, "id" | "name" | "license_expiry" | "status">;

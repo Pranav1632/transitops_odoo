@@ -149,7 +149,7 @@ export default function AnalyticsPage() {
               </thead>
               <tbody className="divide-y divide-zinc-850">
                 {reportsData.vehicleROIs.map((item) => (
-                  <tr key={item.vehicle_id} className="hover:bg-zinc-900/10 transition-colors">
+                  <tr key={item.reg_number} className="hover:bg-zinc-900/10 transition-colors">
                     <td className="px-6 py-4 font-semibold text-white">
                       {item.reg_number}
                     </td>

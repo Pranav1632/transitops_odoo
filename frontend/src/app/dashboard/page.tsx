@@ -1,180 +1,83 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { useSession } from '@/shared/hooks/useSession';
-import { getFleetKpisApi } from '@/modules/fleet-identity/api/fleetApi';
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
-import { Skeleton } from '@/components/ui/skeleton';
-import { Truck, CheckCircle2, AlertTriangle, Users, Route, Wrench, BarChart3 } from 'lucide-react';
-import { toast } from 'sonner';
+import Link from "next/link";
+import KPICards from "@/modules/maintenance-finance/components/KPICards";
+import { Truck, Compass, Wrench, Coins, ArrowUpRight } from "lucide-react";
 
 export default function DashboardPage() {
-  const router = useRouter();
-  const { user, loading: authLoading } = useSession();
-  const [kpis, setKpis] = useState<any>(null);
-  const [kpisLoading, setKpisLoading] = useState(true);
-
-  useEffect(() => {
-    if (!authLoading && !user) {
-      router.push('/login');
-    }
-  }, [user, authLoading, router]);
-
-  useEffect(() => {
-    if (!user) return;
-
-    const fetchKpis = async () => {
-      try {
-        const data = await getFleetKpisApi();
-        setKpis(data);
-      } catch (err: any) {
-        console.error(err);
-        toast.error('Failed to load dashboard KPIs');
-      } finally {
-        setKpisLoading(false);
-      }
-    };
-
-    fetchKpis();
-  }, [user]);
-
-  if (authLoading) {
-    return (
-      <div className="space-y-6">
-        <Skeleton className="h-8 w-48 bg-zinc-800" />
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          {Array.from({ length: 4 }).map((_, i) => (
-            <Skeleton key={i} className="h-28 bg-zinc-850 rounded-xl" />
-          ))}
-        </div>
-      </div>
-    );
-  }
-
-  if (!user) {
-    return null; // Will redirect
-  }
-
   return (
-    <div className="space-y-6">
-      {/* Title */}
+    <div className="space-y-8">
+      {/* Welcome Banner */}
+      <div className="rounded-3xl bg-zinc-950 text-white p-8 relative overflow-hidden border border-zinc-800 shadow-xl">
+        <div className="absolute right-0 bottom-0 top-0 w-1/3 bg-gradient-to-l from-emerald-500/10 to-transparent pointer-events-none" />
+        <h1 className="text-2xl font-bold mb-2">Welcome back, Alex Mercer</h1>
+        <p className="text-sm text-zinc-400 max-w-md">
+          Monitoring fleet operations, active dispatch status, and financial ROI in real time.
+        </p>
+      </div>
+
+      {/* KPI Cards from Module C (Finance & Operational) */}
       <div>
-        <h1 className="text-2xl font-bold tracking-tight text-white">Operations Dashboard</h1>
-        <p className="text-sm text-zinc-400">Real-time overview of fleet identity and logistics statistics.</p>
+        <h3 className="text-sm font-semibold text-zinc-400 uppercase tracking-wider mb-4">Financial & Operational Metrics (Module C)</h3>
+        <KPICards />
       </div>
 
-      {/* Module A KPIs Section */}
-      <div className="space-y-4">
-        <h2 className="text-lg font-semibold text-zinc-300">Fleet & Personnel Registry (Module A)</h2>
-        
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          {/* Card 1: Active Vehicles */}
-          <Card className="bg-zinc-900/40 border-zinc-800 backdrop-blur-md">
-            <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-              <CardTitle className="text-sm font-medium text-zinc-400">Active Vehicles</CardTitle>
-              <div className="rounded-full bg-sky-500/10 p-2 text-sky-500">
-                <Truck className="h-4 w-4" />
+      {/* Grid of Other Module Highlights */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {/* Module A Summary Card */}
+        <div className="rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-6 space-y-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="p-2.5 bg-emerald-500/10 rounded-lg text-emerald-500 border border-emerald-500/20">
+                <Truck className="w-5 h-5" />
               </div>
-            </CardHeader>
-            <CardContent>
-              {kpisLoading ? (
-                <Skeleton className="h-8 w-16 bg-zinc-800" />
-              ) : (
-                <div className="text-2xl font-bold text-white">{kpis?.activeVehicles || 0}</div>
-              )}
-              <p className="text-xs text-zinc-500 mt-1">Currently on a trip</p>
-            </CardContent>
-          </Card>
-
-          {/* Card 2: Available Vehicles */}
-          <Card className="bg-zinc-900/40 border-zinc-800 backdrop-blur-md">
-            <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-              <CardTitle className="text-sm font-medium text-zinc-400">Available Vehicles</CardTitle>
-              <div className="rounded-full bg-emerald-500/10 p-2 text-emerald-500">
-                <CheckCircle2 className="h-4 w-4" />
+              <div>
+                <h4 className="font-bold text-zinc-950 dark:text-zinc-50">Active Fleet Registry</h4>
+                <p className="text-[10px] text-zinc-500">Module A Identity & Fleet Status</p>
               </div>
-            </CardHeader>
-            <CardContent>
-              {kpisLoading ? (
-                <Skeleton className="h-8 w-16 bg-zinc-800" />
-              ) : (
-                <div className="text-2xl font-bold text-white">{kpis?.availableVehicles || 0}</div>
-              )}
-              <p className="text-xs text-zinc-500 mt-1">Ready for dispatch</p>
-            </CardContent>
-          </Card>
-
-          {/* Card 3: Vehicles in Shop */}
-          <Card className="bg-zinc-900/40 border-zinc-800 backdrop-blur-md">
-            <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-              <CardTitle className="text-sm font-medium text-zinc-400">In Shop</CardTitle>
-              <div className="rounded-full bg-amber-500/10 p-2 text-amber-500">
-                <Wrench className="h-4 w-4" />
-              </div>
-            </CardHeader>
-            <CardContent>
-              {kpisLoading ? (
-                <Skeleton className="h-8 w-16 bg-zinc-800" />
-              ) : (
-                <div className="text-2xl font-bold text-white">{kpis?.vehiclesInMaintenance || 0}</div>
-              )}
-              <p className="text-xs text-zinc-500 mt-1">Undergoing maintenance</p>
-            </CardContent>
-          </Card>
-
-          {/* Card 4: Drivers On Duty */}
-          <Card className="bg-zinc-900/40 border-zinc-800 backdrop-blur-md">
-            <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-              <CardTitle className="text-sm font-medium text-zinc-400">Drivers On Duty</CardTitle>
-              <div className="rounded-full bg-indigo-500/10 p-2 text-indigo-500">
-                <Users className="h-4 w-4" />
-              </div>
-            </CardHeader>
-            <CardContent>
-              {kpisLoading ? (
-                <Skeleton className="h-8 w-16 bg-zinc-800" />
-              ) : (
-                <div className="text-2xl font-bold text-white">{kpis?.driversOnDuty || 0}</div>
-              )}
-              <p className="text-xs text-zinc-500 mt-1">Active or standby</p>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
-
-      {/* Placeholders for future modules */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t border-zinc-800">
-        {/* Module B Placeholder */}
-        <div className="border border-dashed border-zinc-800 rounded-2xl p-6 bg-zinc-900/10 flex flex-col justify-center items-center text-center space-y-3">
-          <div className="rounded-full bg-zinc-900 p-3 text-zinc-500">
-            <Route className="h-6 w-6" />
+            </div>
+            <Link href="/fleet" className="text-xs text-emerald-500 hover:underline flex items-center gap-1 font-semibold">
+              Registry <ArrowUpRight className="w-3.5 h-3.5" />
+            </Link>
           </div>
-          <div>
-            <h3 className="text-sm font-semibold text-zinc-300">Trip & Dispatch Operations</h3>
-            <p className="text-xs text-zinc-500 max-w-xs mt-1">
-              Module B widgets will compose live tracking boards and dispatch status updates.
-            </p>
+          <div className="grid grid-cols-2 gap-4 pt-2">
+            <div className="p-4 bg-zinc-50 dark:bg-zinc-950 rounded-xl border border-zinc-100 dark:border-zinc-800">
+              <span className="text-[10px] text-zinc-500 font-medium block mb-1">TOTAL VEHICLES</span>
+              <span className="text-xl font-bold text-zinc-900 dark:text-zinc-50">12</span>
+            </div>
+            <div className="p-4 bg-zinc-50 dark:bg-zinc-950 rounded-xl border border-zinc-100 dark:border-zinc-800">
+              <span className="text-[10px] text-zinc-500 font-medium block mb-1">DRIVERS ACTIVE</span>
+              <span className="text-xl font-bold text-zinc-900 dark:text-zinc-50">8</span>
+            </div>
           </div>
-          <span className="text-[10px] px-2 py-0.5 rounded bg-zinc-800 text-zinc-400 uppercase tracking-widest">
-            Module B Pending
-          </span>
         </div>
 
-        {/* Module C Placeholder */}
-        <div className="border border-dashed border-zinc-800 rounded-2xl p-6 bg-zinc-900/10 flex flex-col justify-center items-center text-center space-y-3">
-          <div className="rounded-full bg-zinc-900 p-3 text-zinc-500">
-            <BarChart3 className="h-6 w-6" />
+        {/* Module B Summary Card */}
+        <div className="rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-6 space-y-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="p-2.5 bg-emerald-500/10 rounded-lg text-emerald-500 border border-emerald-500/20">
+                <Compass className="w-5 h-5" />
+              </div>
+              <div>
+                <h4 className="font-bold text-zinc-950 dark:text-zinc-50">Trips & Dispatch</h4>
+                <p className="text-[10px] text-zinc-500">Module B Trip Operations</p>
+              </div>
+            </div>
+            <Link href="/trips" className="text-xs text-emerald-500 hover:underline flex items-center gap-1 font-semibold">
+              Live Board <ArrowUpRight className="w-3.5 h-3.5" />
+            </Link>
           </div>
-          <div>
-            <h3 className="text-sm font-semibold text-zinc-300">Maintenance & ROI Analytics</h3>
-            <p className="text-xs text-zinc-500 max-w-xs mt-1">
-              Module C widgets will render expense breakdowns, cost graphs, and CSV outputs.
-            </p>
+          <div className="grid grid-cols-2 gap-4 pt-2">
+            <div className="p-4 bg-zinc-50 dark:bg-zinc-950 rounded-xl border border-zinc-100 dark:border-zinc-800">
+              <span className="text-[10px] text-zinc-500 font-medium block mb-1">ACTIVE TRIPS</span>
+              <span className="text-xl font-bold text-zinc-900 dark:text-zinc-50">3</span>
+            </div>
+            <div className="p-4 bg-zinc-50 dark:bg-zinc-950 rounded-xl border border-zinc-100 dark:border-zinc-800">
+              <span className="text-[10px] text-zinc-500 font-medium block mb-1">COMPLETED TODAY</span>
+              <span className="text-xl font-bold text-zinc-900 dark:text-zinc-50">6</span>
+            </div>
           </div>
-          <span className="text-[10px] px-2 py-0.5 rounded bg-zinc-800 text-zinc-400 uppercase tracking-widest">
-            Module C Pending
-          </span>
         </div>
       </div>
     </div>

@@ -1,6 +1,6 @@
-export function useVehicles() {
+export function useTrips() {
   return {
-    vehicles: [],
+    trips: [],
     loading: false,
     error: null,
   };

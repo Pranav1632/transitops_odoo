@@ -1,63 +1,29 @@
-'use client';
+"use client";
 
-import { useSession } from '@/shared/hooks/useSession';
-import DriverTable from '@/modules/fleet-identity/components/DriverTable';
-import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
-import { Skeleton } from '@/components/ui/skeleton';
-import { ShieldAlert } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { Users, AlertCircle } from "lucide-react";
 
 export default function DriversPage() {
-  const router = useRouter();
-  const { user, profile, loading } = useSession();
-
-  useEffect(() => {
-    if (!loading && !user) {
-      router.push('/login');
-    }
-  }, [user, loading, router]);
-
-  if (loading) {
-    return (
-      <div className="space-y-6">
-        <div className="space-y-2">
-          <Skeleton className="h-8 w-48 bg-zinc-800" />
-          <Skeleton className="h-4 w-72 bg-zinc-800" />
+  return (
+    <div className="space-y-6">
+      <div className="rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-8 shadow-sm max-w-4xl flex items-start gap-4">
+        <div className="p-3 bg-emerald-500/10 rounded-xl border border-emerald-500/20 text-emerald-500">
+          <Users className="w-6 h-6" />
         </div>
-        <Skeleton className="h-12 w-full bg-zinc-800 rounded-xl" />
-        <Skeleton className="h-96 w-full bg-zinc-800 rounded-xl" />
-      </div>
-    );
-  }
-
-  if (!user) {
-    return null; // Will redirect via useEffect
-  }
-
-  // Authorize: Only fleet_manager and safety_officer can view Drivers page
-  const allowedRoles = ['fleet_manager', 'safety_officer'];
-  if (profile && !allowedRoles.includes(profile.role)) {
-    return (
-      <div className="flex h-[calc(100vh-8rem)] items-center justify-center">
-        <div className="max-w-md w-full border border-red-500/20 bg-red-500/5 backdrop-blur-md rounded-2xl p-6 text-center space-y-4">
-          <div className="inline-flex rounded-full bg-red-500/10 p-3 text-red-500">
-            <ShieldAlert className="h-6 w-6" />
-          </div>
-          <h2 className="text-xl font-semibold text-white">Access Denied</h2>
-          <p className="text-sm text-zinc-400">
-            Only Fleet Managers and Safety Officers are authorized to view and modify the driver logs.
+        <div>
+          <h3 className="text-lg font-bold text-zinc-950 dark:text-zinc-50 mb-1">Driver Management Page</h3>
+          <p className="text-sm text-zinc-500 dark:text-zinc-400 max-w-xl leading-relaxed">
+            This module (Module A) owns driver registration, licensing logs, status updates, and expirations. It is currently being worked on by the Fleet Registry team.
           </p>
-          <Button
-            onClick={() => router.push('/dashboard')}
-            className="w-full bg-white text-black hover:bg-zinc-200"
-          >
-            Return to Dashboard
-          </Button>
         </div>
       </div>
-    );
-  }
 
-  return <DriverTable />;
+      <div className="rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 p-6 flex items-center justify-center min-h-[300px]">
+        <div className="text-center max-w-xs space-y-2">
+          <AlertCircle className="w-8 h-8 text-zinc-400 mx-auto" />
+          <p className="text-sm font-semibold text-zinc-700 dark:text-zinc-300">Placeholder Screen</p>
+          <p className="text-xs text-zinc-500">Driver lists and expiry logs will be rendered here by Module A's implementation.</p>
+        </div>
+      </div>
+    </div>
+  );
 }

@@ -3,14 +3,18 @@
 import Link from "next/link";
 import KPICards from "@/modules/maintenance-finance/components/KPICards";
 import { Truck, Compass, Wrench, Coins, ArrowUpRight } from "lucide-react";
+import { useSession } from "@/shared/hooks/useSession";
 
 export default function DashboardPage() {
+  const { profile } = useSession();
+  const userName = profile?.full_name || "User";
+
   return (
     <div className="space-y-8">
       {/* Welcome Banner */}
       <div className="rounded-3xl bg-zinc-950 text-white p-8 relative overflow-hidden border border-zinc-800 shadow-xl">
         <div className="absolute right-0 bottom-0 top-0 w-1/3 bg-gradient-to-l from-emerald-500/10 to-transparent pointer-events-none" />
-        <h1 className="text-2xl font-bold mb-2">Welcome back, Alex Mercer</h1>
+        <h1 className="text-2xl font-bold mb-2">Welcome back, {userName}</h1>
         <p className="text-sm text-zinc-400 max-w-md">
           Monitoring fleet operations, active dispatch status, and financial ROI in real time.
         </p>

@@ -47,9 +47,9 @@ export default function SignupForm() {
       const data = await signupApi(values);
       toast.success(data.message || 'Account created successfully! Please log in.');
       router.push('/login');
-    } catch (err: any) {
+    } catch (err) {
       console.error(err);
-      const errMsg = err.response?.data?.error || err.message || 'Failed to create account';
+      const errMsg = err instanceof Error ? err.message : 'Failed to create account';
       toast.error(errMsg);
     } finally {
       setLoading(false);

@@ -26,7 +26,7 @@ export default function AnalyticsPage() {
     // Section 1: Fleet ROI summary
     csvContent += "FLEET VEHICLE ROI SUMMARY\n";
     csvContent += "Registration Number,Model,Revenue (INR),Total Costs (INR),ROI (%)\n";
-    reportsData.vehicleROIs.forEach((item: any) => {
+    reportsData.vehicleROIs.forEach((item) => {
       csvContent += `"${item.reg_number}","${item.model}",${item.revenue},${item.total_costs},${item.roi}%\n`;
     });
 
@@ -148,7 +148,7 @@ export default function AnalyticsPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-zinc-850">
-                {reportsData.vehicleROIs.map((item: any) => (
+                {reportsData.vehicleROIs.map((item) => (
                   <tr key={item.vehicle_id} className="hover:bg-zinc-900/10 transition-colors">
                     <td className="px-6 py-4 font-semibold text-white">
                       {item.reg_number}

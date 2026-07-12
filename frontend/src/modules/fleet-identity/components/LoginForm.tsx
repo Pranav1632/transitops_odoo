@@ -58,9 +58,9 @@ export default function LoginForm() {
       
       router.push('/dashboard');
       router.refresh();
-    } catch (err: any) {
+    } catch (err) {
       console.error(err);
-      const errMsg = err.response?.data?.error || err.message || 'Failed to log in';
+      const errMsg = err instanceof Error ? err.message : 'Failed to log in';
       toast.error(errMsg);
     } finally {
       setLoading(false);

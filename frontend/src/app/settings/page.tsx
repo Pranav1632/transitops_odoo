@@ -21,7 +21,7 @@ export default function SettingsPage() {
         <div className="text-center max-w-xs space-y-2">
           <AlertCircle className="w-8 h-8 text-zinc-400 mx-auto" />
           <p className="text-sm font-semibold text-zinc-700 dark:text-zinc-300">Placeholder Screen</p>
-          <p className="text-xs text-zinc-500">General settings and permissions configuration will be rendered here by Module A's implementation.</p>
+          <p className="text-xs text-zinc-500">General settings and permissions configuration will be rendered here by Module A&apos;s implementation.</p>
         </div>
       </div>
     </div>

@@ -28,7 +28,7 @@ export default function SettingsForm() {
       toast.success('Logged out successfully');
       router.push('/login');
       router.refresh();
-    } catch (err: any) {
+    } catch (err) {
       console.error(err);
       toast.error('Failed to log out');
     }

@@ -7,17 +7,18 @@ import DriverForm from '@/modules/fleet-identity/components/DriverForm';
 import { useSession } from '@/shared/hooks/useSession';
 import { Plus, Search, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Driver, CreateDriverInput, UpdateDriverInput } from '@/shared/types/database.types';
 
 export default function DriversPage() {
   const { drivers, loading, page, setPage, totalPages, filters, actions } = useDrivers();
   const { profile } = useSession();
 
   const [isFormOpen, setIsFormOpen] = useState(false);
-  const [editingDriver, setEditingDriver] = useState<any>(null);
+  const [editingDriver, setEditingDriver] = useState<Driver | null>(null);
 
   const hasWriteAccess = profile?.role === 'fleet_manager' || profile?.role === 'safety_officer';
 
-  const handleEdit = (driver: any) => {
+  const handleEdit = (driver: Driver) => {
     setEditingDriver(driver);
     setIsFormOpen(true);
   };
@@ -27,7 +28,7 @@ export default function DriversPage() {
     setIsFormOpen(true);
   };
 
-  const handleFormSubmit = async (data: any) => {
+  const handleFormSubmit = async (data: CreateDriverInput | UpdateDriverInput) => {
     if (editingDriver) {
       await actions.editDriver(editingDriver.id, data);
     } else {

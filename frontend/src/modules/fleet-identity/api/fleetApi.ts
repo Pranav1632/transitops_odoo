@@ -1,4 +1,5 @@
 import apiClient from '../../../shared/lib/apiClient';
+import { CreateVehicleInput, UpdateVehicleInput, CreateDriverInput, UpdateDriverInput, SignupInput, LoginInput } from '@/shared/types/database.types';
 
 export interface Vehicle {
   id: string;
@@ -48,12 +49,12 @@ export interface ListDriversResponse {
 }
 
 // Auth API
-export const signupApi = async (data: any) => {
+export const signupApi = async (data: SignupInput) => {
   const response = await apiClient.post('/fleet/auth/signup', data);
   return response.data;
 };
 
-export const loginApi = async (data: any) => {
+export const loginApi = async (data: LoginInput) => {
   const response = await apiClient.post('/fleet/auth/login', data);
   return response.data;
 };
@@ -69,12 +70,12 @@ export const getVehiclesApi = async (params?: { page?: number; limit?: number; s
   return response.data;
 };
 
-export const createVehicleApi = async (data: any): Promise<Vehicle> => {
+export const createVehicleApi = async (data: CreateVehicleInput): Promise<Vehicle> => {
   const response = await apiClient.post<{ data: Vehicle }>('/fleet/vehicles', data);
   return response.data.data;
 };
 
-export const updateVehicleApi = async (id: string, data: any): Promise<Vehicle> => {
+export const updateVehicleApi = async (id: string, data: UpdateVehicleInput): Promise<Vehicle> => {
   const response = await apiClient.put<{ data: Vehicle }>(`/fleet/vehicles/${id}`, data);
   return response.data.data;
 };
@@ -90,12 +91,12 @@ export const getDriversApi = async (params?: { page?: number; limit?: number; st
   return response.data;
 };
 
-export const createDriverApi = async (data: any): Promise<Driver> => {
+export const createDriverApi = async (data: CreateDriverInput): Promise<Driver> => {
   const response = await apiClient.post<{ data: Driver }>('/fleet/drivers', data);
   return response.data.data;
 };
 
-export const updateDriverApi = async (id: string, data: any): Promise<Driver> => {
+export const updateDriverApi = async (id: string, data: UpdateDriverInput): Promise<Driver> => {
   const response = await apiClient.put<{ data: Driver }>(`/fleet/drivers/${id}`, data);
   return response.data.data;
 };

@@ -7,17 +7,18 @@ import VehicleForm from '@/modules/fleet-identity/components/VehicleForm';
 import { useSession } from '@/shared/hooks/useSession';
 import { Plus, Search, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Vehicle, CreateVehicleInput, UpdateVehicleInput } from '@/shared/types/database.types';
 
 export default function FleetPage() {
   const { vehicles, loading, page, setPage, totalPages, filters, actions } = useVehicles();
   const { profile } = useSession();
 
   const [isFormOpen, setIsFormOpen] = useState(false);
-  const [editingVehicle, setEditingVehicle] = useState<any>(null);
+  const [editingVehicle, setEditingVehicle] = useState<Vehicle | null>(null);
 
   const isFleetManager = profile?.role === 'fleet_manager';
 
-  const handleEdit = (vehicle: any) => {
+  const handleEdit = (vehicle: Vehicle) => {
     setEditingVehicle(vehicle);
     setIsFormOpen(true);
   };
@@ -27,7 +28,7 @@ export default function FleetPage() {
     setIsFormOpen(true);
   };
 
-  const handleFormSubmit = async (data: any) => {
+  const handleFormSubmit = async (data: CreateVehicleInput | UpdateVehicleInput) => {
     if (editingVehicle) {
       await actions.editVehicle(editingVehicle.id, data);
     } else {

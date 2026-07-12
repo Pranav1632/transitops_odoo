@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { 
   BarChart, 
   Bar, 
@@ -23,13 +23,8 @@ interface RevenueChartProps {
 export default function RevenueChart({ data = [] }: RevenueChartProps) {
   const [mounted, setMounted] = useState(false);
 
-  useEffect(() => {
-    let isMounted = true;
-    if (isMounted) setMounted(true);
-    return () => { isMounted = false; };
-  }, []);
-
   if (!mounted) {
+    setMounted(true);
     return <div className="h-80 w-full bg-zinc-50 dark:bg-zinc-950 rounded-xl animate-pulse" />;
   }
 

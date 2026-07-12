@@ -1,7 +1,7 @@
-import { Request, Response, NextFunction } from 'express';
-import { tripService } from '../services/trip.service';
-import { eligibilityService } from '../services/eligibility.service';
-import { createTripSchema, completeTripSchema } from '../validators/validators';
+import type { Request, Response, NextFunction } from 'express';
+import { tripService } from '../services/trip.service.js';
+import { eligibilityService } from '../services/eligibility.service.js';
+import { createTripSchema, completeTripSchema } from '../validators/validators.js';
 
 export class TripController {
   /**
@@ -41,7 +41,7 @@ export class TripController {
    */
   async dispatchTrip(req: Request, res: Response, next: NextFunction) {
     try {
-      const { id } = req.params;
+      const id = req.params.id as string;
       if (!id) {
         res.status(400).json({ success: false, message: 'Trip ID is required' });
         return;
@@ -62,7 +62,7 @@ export class TripController {
    */
   async completeTrip(req: Request, res: Response, next: NextFunction) {
     try {
-      const { id } = req.params;
+      const id = req.params.id as string;
       if (!id) {
         res.status(400).json({ success: false, message: 'Trip ID is required' });
         return;
@@ -84,7 +84,7 @@ export class TripController {
    */
   async cancelTrip(req: Request, res: Response, next: NextFunction) {
     try {
-      const { id } = req.params;
+      const id = req.params.id as string;
       if (!id) {
         res.status(400).json({ success: false, message: 'Trip ID is required' });
         return;
@@ -105,12 +105,23 @@ export class TripController {
    */
   async listTrips(req: Request, res: Response, next: NextFunction) {
     try {
-      const page = req.query.page ? parseInt(req.query.page as string, 10) : undefined;
-      const limit = req.query.limit ? parseInt(req.query.limit as string, 10) : undefined;
-      const status = req.query.status as string | undefined;
-      const search = req.query.search as string | undefined;
+      const filters: { page?: number; limit?: number; status?: string; search?: string } = {};
+      if (req.query.page) {
+        const parsedPage = parseInt(req.query.page as string, 10);
+        if (!isNaN(parsedPage)) filters.page = parsedPage;
+      }
+      if (req.query.limit) {
+        const parsedLimit = parseInt(req.query.limit as string, 10);
+        if (!isNaN(parsedLimit)) filters.limit = parsedLimit;
+      }
+      if (typeof req.query.status === 'string') {
+        filters.status = req.query.status;
+      }
+      if (typeof req.query.search === 'string') {
+        filters.search = req.query.search;
+      }
 
-      const result = await tripService.listTrips({ page, limit, status, search });
+      const result = await tripService.listTrips(filters);
       res.status(200).json({
         success: true,
         ...result
